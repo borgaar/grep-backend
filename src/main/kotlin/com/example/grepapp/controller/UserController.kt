@@ -1,8 +1,8 @@
-package com.example.springbootoving.controller
+package com.example.grepapp.controller
 
-import com.example.springbootoving.model.User
-import com.example.springbootoving.repository.UserRepository
-import com.example.springbootoving.security.JwtUtil
+import com.example.grepapp.model.User
+import com.example.grepapp.repository.UserRepository
+import com.example.grepapp.security.JwtUtil
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 

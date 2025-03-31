@@ -1,11 +1,11 @@
-package com.example.springbootoving.service
+package com.example.grepapp.service
 
-import com.example.springbootoving.dto.CalculationRequest
-import com.example.springbootoving.dto.CalculationResponse
-import com.example.springbootoving.model.Calculation
-import com.example.springbootoving.model.User
-import com.example.springbootoving.repository.CalculationRepository
-import com.example.springbootoving.repository.UserRepository
+import com.example.grepapp.dto.CalculationRequest
+import com.example.grepapp.dto.CalculationResponse
+import com.example.grepapp.model.Calculation
+import com.example.grepapp.model.User
+import com.example.grepapp.repository.CalculationRepository
+import com.example.grepapp.repository.UserRepository
 import net.objecthunter.exp4j.Expression
 import net.objecthunter.exp4j.ExpressionBuilder
 import org.springframework.data.domain.Page

@@ -1,9 +1,9 @@
-package com.example.springbootoving.controller
+package com.example.grepapp.controller
 
-import com.example.springbootoving.dto.CalculationRequest
-import com.example.springbootoving.dto.CalculationResponse
-import com.example.springbootoving.model.Calculation
-import com.example.springbootoving.service.CalculateService
+import com.example.grepapp.dto.CalculationRequest
+import com.example.grepapp.dto.CalculationResponse
+import com.example.grepapp.model.Calculation
+import com.example.grepapp.service.CalculateService
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.springframework.data.domain.Page

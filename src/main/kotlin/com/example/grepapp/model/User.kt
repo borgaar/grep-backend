@@ -1,4 +1,4 @@
-package com.example.springbootoving.model
+package com.example.grepapp.model
 
 import jakarta.persistence.*
 
