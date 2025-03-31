@@ -1,4 +1,4 @@
-package com.example.springbootoving
+package com.example.grepapp
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
