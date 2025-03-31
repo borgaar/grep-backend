@@ -3,6 +3,7 @@ package com.example.springbootoving.controller
 import com.example.springbootoving.model.User
 import com.example.springbootoving.repository.UserRepository
 import com.example.springbootoving.security.JwtUtil
+import org.apache.logging.log4j.LogManager
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.web.bind.annotation.*
 
@@ -11,20 +12,23 @@ data class AuthResponse(val token: String)
 
 @RestController
 @RequestMapping("/api/auth")
+@CrossOrigin(origins = ["http://localhost:5173"])
 class AuthController(
     private val userRepository: UserRepository,
     private val jwtUtil: JwtUtil
 ) {
     private val passwordEncoder = BCryptPasswordEncoder()
+    private val logger = LogManager.getLogger(this::class::java);
 
     @PostMapping("/register")
-    fun register(@RequestBody request: AuthRequest): String {
+    fun register(@RequestBody request: AuthRequest): AuthResponse {
+        println(request)
         if (userRepository.findByUsername(request.username).isPresent) {
-            return "User already exists"
+            throw RuntimeException("User already exists")
         }
         val user = User(username = request.username, password = passwordEncoder.encode(request.password))
         userRepository.save(user)
-        return "User registered successfully"
+        return AuthResponse(jwtUtil.generateToken(user.username))
     }
 
     @PostMapping("/login")
