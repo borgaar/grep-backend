@@ -1,12 +1,10 @@
 package com.example.grepapp.model
 
-import jakarta.persistence.*
+import java.util.UUID
 
-@Entity
-@Table(name = "users")
 data class User(
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0,
-    val username: String,
-    val password: String
+    val phone: String,
+    val passwordHash: String,
+    val firstName: String,
+    val lastName: String,
 )

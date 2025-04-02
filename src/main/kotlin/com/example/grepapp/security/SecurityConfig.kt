@@ -27,11 +27,10 @@ class SecurityConfig(private val userRepository: UserRepository) {
     @Bean
     fun userDetailsService(): UserDetailsService {
         return UserDetailsService { username ->
-            val user = userRepository.findByUsername(username)
-                .orElseThrow { RuntimeException("User not found") }
+            val user = userRepository.find(username) !!
 
-            User.withUsername(user.username)
-                .password(user.password)
+            User.withUsername(user.phone)
+                .password(user.passwordHash)
                 .build()
         }
     }
@@ -91,7 +90,7 @@ class JWTAuthenticationFilter() : OncePerRequestFilter() {
 
     private fun extractUserIdFromJWT(jwt: String): String? {
         try {
-            val jwt = JwtUtil().extractUsername(jwt);
+            val jwt = JwtUtil().extractPhone(jwt);
             return jwt;
         } catch (e: Exception) {
             // TODO: Log exception
