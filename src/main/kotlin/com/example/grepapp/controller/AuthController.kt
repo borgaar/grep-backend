@@ -3,10 +3,8 @@ package com.example.grepapp.controller
 import com.example.grepapp.dto.AuthResponse
 import com.example.grepapp.dto.UserRegisterRequest
 import com.example.grepapp.model.RegisterUser
-import com.example.grepapp.model.User
 import com.example.grepapp.service.AuthService
 import org.apache.logging.log4j.LogManager
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.web.bind.annotation.*
 
 @RestController

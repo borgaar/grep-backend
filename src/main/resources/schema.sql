@@ -1,0 +1,5 @@
+DROP TABLE IF EXISTS users;
+
+CREATE TABLE users (
+    phone VARCHAR(20) NOT NULL PRIMARY KEY
+)
