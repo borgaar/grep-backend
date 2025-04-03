@@ -2,6 +2,7 @@ package com.example.grepapp.repository
 
 import com.example.grepapp.model.User
 import org.springframework.dao.DataAccessException
+import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.queryForObject
@@ -20,12 +21,13 @@ class UserRepository(private var jdbc: JdbcTemplate) {
     }
 
     fun find(phone: String): User? {
-        val sql = "SELECT '3' AS phone, 's' AS password_hash, 'd' AS first_name, 'f' AS last_name;";
-        return jdbc.queryForObject(sql, rowMapper)
+        val sql = "SELECT phone, password_hash, first_name, last_name FROM users WHERE phone = ?;";
+        return try { jdbc.queryForObject(sql, rowMapper, phone) }
+        catch (e: EmptyResultDataAccessException) { null }
     }
 
     fun save(user: User) {
-        val sql = "SELECT 1;";
-        jdbc.update(sql);
+        val sql = "INSERT INTO users (phone, password_hash, first_name, last_name) VALUES (?, ?, ?, ?);";
+        jdbc.update(sql, user.phone, user.passwordHash, user.firstName, user.lastName);
     }
 }
