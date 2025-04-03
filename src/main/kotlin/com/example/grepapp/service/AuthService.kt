@@ -4,8 +4,10 @@ import com.example.grepapp.model.RegisterUser
 import com.example.grepapp.model.User
 import com.example.grepapp.repository.UserRepository
 import com.example.grepapp.security.JwtUtil
+import org.springframework.http.HttpStatus
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
+import org.springframework.web.client.HttpStatusCodeException
 
 @Service
 class AuthService(
@@ -28,6 +30,8 @@ class AuthService(
     }
 
     fun register(user: RegisterUser): User? {
+        val hashed = passwordEncoder.encode(user.passwordRaw)
+        println(hashed)
         if (userRepository.find(user.phone) != null) {
             return null
         }
