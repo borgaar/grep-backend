@@ -27,7 +27,7 @@ class SecurityConfig(private val userRepository: UserRepository) {
     @Bean
     fun userDetailsService(): UserDetailsService {
         return UserDetailsService { username ->
-            val user = userRepository.find(username) !!
+            val user = userRepository.find(username)!!
 
             User.withUsername(user.phone)
                 .password(user.passwordHash)
@@ -43,7 +43,7 @@ class SecurityConfig(private val userRepository: UserRepository) {
     @Bean
     fun securityFilterChain(http: HttpSecurity, corsConfigurationSource: CorsConfigurationSource): SecurityFilterChain {
         http
-            .cors{ }
+            .cors { }
             .csrf { it.disable() }  // Disable CSRF for simplicity (enable in production)
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) } // No session, only JWT
             .authorizeHttpRequests {

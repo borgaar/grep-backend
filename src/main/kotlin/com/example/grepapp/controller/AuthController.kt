@@ -24,12 +24,12 @@ class AuthController(
             lastName = request.lastName,
         )
         val newUser = authService.register(user)
-        return AuthResponse(authService.generateToken(newUser !!))
+        return AuthResponse(authService.generateToken(newUser!!))
     }
 
     @PostMapping("/login")
     fun login(@RequestBody request: UserRegisterRequest): AuthResponse {
         val user = authService.login(request.phone, request.password)
-        return AuthResponse(authService.generateToken(user !!))
+        return AuthResponse(authService.generateToken(user!!))
     }
 }
