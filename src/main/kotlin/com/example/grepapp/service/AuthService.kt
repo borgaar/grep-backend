@@ -19,7 +19,7 @@ class AuthService(
     }
 
     fun login(phone: String, passwordRaw: String): User? {
-        val user = userRepository.find(phone) !!;
+        val user = userRepository.find(phone)!!;
         return if (passwordEncoder.matches(passwordRaw, user.passwordHash)) {
             user;
         } else {
