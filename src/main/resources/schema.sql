@@ -1,4 +1,9 @@
 DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS categories;
+
+CREATE TABLE categories (
+    name VARCHAR(255) NOT NULL PRIMARY KEY
+);
 
 CREATE TABLE users
 (
