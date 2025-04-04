@@ -2,6 +2,8 @@ package com.example.grepapp.repository
 
 import com.example.grepapp.model.Category
 import com.example.grepapp.model.User
+import org.apache.logging.log4j.Level
+import org.apache.logging.log4j.LogManager
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
@@ -20,19 +22,21 @@ class CategoryRepository (private var jdbc: JdbcTemplate)
         )
     }
 
-    fun create(category: Category) {
+    private val logger = LogManager.getLogger(this::class::java);
+
+    fun create(category: Category): Boolean {
         val sql = "INSERT INTO categories (name) VALUES (?)";
-        jdbc.update(sql, category.name)
+        return jdbc.update(sql, category.name) != 0
     }
 
-    fun delete(category: Category) {
+    fun delete(category: Category): Boolean {
         val sql = "DELETE FROM categories WHERE name = ?";
-        jdbc.update(sql, category.name)
+        return jdbc.update(sql, category.name) != 0
     }
 
-    fun update(oldCategory: Category, newCategory: Category) {
+    fun update(oldCategory: Category, newCategory: Category): Boolean {
         val sql = "UPDATE categories SET name = ? WHERE name = ?;";
-        jdbc.update(sql, oldCategory.name)
+        return jdbc.update(sql, oldCategory.name) != 0
     }
 
     fun getAll(page: Int, pageSize: Int): List<Category> {

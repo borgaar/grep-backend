@@ -14,7 +14,6 @@ class CategoryService (
     fun create(category: Category): Boolean {
         return try {
             categoryRepository.create(category);
-            true;
         } catch (ex: Exception) {
             false;
         }
@@ -26,8 +25,7 @@ class CategoryService (
 
     fun delete(category: Category): Boolean {
         return try {
-            categoryRepository.delete(category)
-            true;
+            categoryRepository.delete(category);
         } catch (ex: Exception) {
             false;
         }
@@ -35,8 +33,7 @@ class CategoryService (
 
     fun update(category: Category, newCategory: Category): Boolean {
         return try {
-            categoryRepository.update(category, newCategory)
-            true;
+            categoryRepository.update(category, newCategory);
         } catch (ex: Exception) {
             false;
         }
