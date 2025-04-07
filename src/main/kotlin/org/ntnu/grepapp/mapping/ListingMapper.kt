@@ -1,8 +1,8 @@
 package org.ntnu.grepapp.mapping
 
-import com.example.grepapp.dto.ListingDTO
-import com.example.grepapp.dto.LocationDTO
-import com.example.grepapp.model.Listing
+import org.ntnu.grepapp.dto.ListingDTO
+import org.ntnu.grepapp.dto.LocationDTO
+import org.ntnu.grepapp.model.Listing
 
 fun toListingDTO(value: Listing): ListingDTO {
     return ListingDTO(

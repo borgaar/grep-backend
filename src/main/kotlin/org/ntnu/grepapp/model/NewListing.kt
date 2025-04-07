@@ -1,4 +1,4 @@
-package com.example.grepapp.model
+package org.ntnu.grepapp.model
 
 import java.util.*
 

@@ -1,4 +1,4 @@
-package com.example.grepapp.dto
+package org.ntnu.grepapp.dto
 
 data class LocationDTO(
     val lat: Double,

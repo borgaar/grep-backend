@@ -1,4 +1,4 @@
-package com.example.grepapp.dto
+package org.ntnu.grepapp.dto
 
 
 class ListingGetPaginatedResponse(

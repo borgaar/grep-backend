@@ -1,6 +1,6 @@
-package com.example.grepapp.repository
+package org.ntnu.grepapp.repository
 
-import com.example.grepapp.model.*
+import org.ntnu.grepapp.model.*
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper

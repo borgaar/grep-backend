@@ -1,4 +1,4 @@
-package com.example.grepapp.dto
+package org.ntnu.grepapp.dto
 
 data class ListingUpdateRequest(
     val title: String,

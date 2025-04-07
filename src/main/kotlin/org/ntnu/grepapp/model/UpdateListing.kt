@@ -1,4 +1,4 @@
-package com.example.grepapp.model
+package org.ntnu.grepapp.model
 
 data class UpdateListing(
     val title: String,
