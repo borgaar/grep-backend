@@ -16,9 +16,12 @@ class CategoryController(
 ) {
     private val logger = LogManager.getLogger(this::class::java);
 
-    @GetMapping("/get")
-    fun getAll(@RequestBody request: PaginationDetail): List<CategoryResponse> {
-        val list = categoryService.getAll(request.page, request.pageSize);
+    @GetMapping
+    fun getAll(
+        @RequestParam page: Int,
+        @RequestParam pageSize: Int
+    ): List<CategoryResponse> {
+        val list = categoryService.getAll(page, pageSize);
         return list.map { CategoryResponse(it.name) }
     }
 
