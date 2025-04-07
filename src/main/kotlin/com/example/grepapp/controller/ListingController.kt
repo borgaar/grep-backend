@@ -19,8 +19,8 @@ class ListingController(
     val authService: AuthService,
 ) {
     @GetMapping
-    fun getPaginated(@RequestBody request: ListingGetPaginatedRequest): ResponseEntity<List<ListingDTO>> {
-        val listings = service.getPaginated(request.page, request.pageSize)
+    fun getPaginated(@RequestParam page: Int, @RequestParam size: Int): ResponseEntity<List<ListingDTO>> {
+        val listings = service.getPaginated(page, size)
 
         val listingsOut = ArrayList<ListingDTO>()
         for (l in listings) {
