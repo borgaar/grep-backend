@@ -10,13 +10,13 @@ import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
 
 @Controller
-@CrossOrigin(origins = ["http://localhost:5173"])
+@CrossOrigin(origins = ["http://localhost:5173", "*"])
 class ChatController (
 //    private val chatService: ChatService
 ) {
     private val logger = LogManager.getLogger(this::class.java)
 
-    @MessageMapping("/{userId}/send")
+    @MessageMapping("/send")
     fun sendMessage(@RequestBody message: CreateChatMessage, @PathVariable userId: String): ChatMessage {
         logger.log(Level.INFO, userId, message.toString());
 
