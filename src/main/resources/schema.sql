@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS listings;
+DROP TABLE IF EXISTS categories;
 DROP TABLE IF EXISTS users;
 
 CREATE TABLE users
@@ -7,6 +8,10 @@ CREATE TABLE users
     password_hash TEXT                    NOT NULL,
     first_name    TEXT                    NOT NULL,
     last_name     TEXT                    NOT NULL
+);
+
+CREATE TABLE categories (
+    name VARCHAR(255) NOT NULL PRIMARY KEY
 );
 
 CREATE TABLE listings
