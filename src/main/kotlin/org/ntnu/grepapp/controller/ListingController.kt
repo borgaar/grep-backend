@@ -1,6 +1,8 @@
 package org.ntnu.grepapp.controller
 
-import org.ntnu.grepapp.dto.*
+import org.ntnu.grepapp.dto.BookmarkedListingDTO
+import org.ntnu.grepapp.dto.ListingDTO
+import org.ntnu.grepapp.dto.listing.*
 import org.ntnu.grepapp.mapping.toListingDTO
 import org.ntnu.grepapp.model.NewListing
 import org.ntnu.grepapp.model.UpdateListing
@@ -42,7 +44,7 @@ class ListingController(
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun create(@RequestBody request: ListingCreateRequest): ResponseEntity<Unit> {
+    fun create(@RequestBody request: CreateRequest): ResponseEntity<Unit> {
 
         val new = NewListing(
             title = request.title,
@@ -78,7 +80,7 @@ class ListingController(
     }
 
     @PatchMapping("/{id}")
-    fun update(@PathVariable id: UUID, @RequestBody listing: ListingUpdateRequest): ResponseEntity<Unit> {
+    fun update(@PathVariable id: UUID, @RequestBody listing: UpdateRequest): ResponseEntity<Unit> {
         val new = UpdateListing(
             title = listing.title,
             description = listing.description,

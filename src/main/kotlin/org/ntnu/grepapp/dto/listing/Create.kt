@@ -1,6 +1,8 @@
-package org.ntnu.grepapp.dto
+package org.ntnu.grepapp.dto.listing
 
-class ListingCreateRequest(
+import org.ntnu.grepapp.dto.LocationDTO
+
+data class CreateRequest(
     val title: String,
     val description: String,
     val location: LocationDTO,
