@@ -18,7 +18,7 @@ class AuthController(
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    fun register(@RequestBody request: RegisterRequest): ResponseEntity<String> {
+    fun register(@RequestBody request: RegisterRequest): ResponseEntity<RegisterResponse> {
         val user = RegisterUser(
             phone = request.phone,
             passwordRaw = request.password,
@@ -27,7 +27,8 @@ class AuthController(
         )
         val maybeUser = authService.register(user)
         val newUser = maybeUser ?: return ResponseEntity(HttpStatus.CONFLICT)
-        return ResponseEntity(authService.generateToken(newUser), HttpStatus.CREATED)
+        val body = RegisterResponse(authService.generateToken(newUser))
+        return ResponseEntity.ok(body)
     }
 
     @PostMapping("/login")
