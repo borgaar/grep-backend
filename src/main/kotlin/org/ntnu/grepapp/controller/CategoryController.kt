@@ -1,10 +1,11 @@
 package org.ntnu.grepapp.controller
 
-import org.ntnu.grepapp.dto.*
+import org.ntnu.grepapp.dto.category.*
 import org.ntnu.grepapp.model.Category
 import org.ntnu.grepapp.service.CategoryService
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
+import org.ntnu.grepapp.dto.CategoryDTO
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -21,13 +22,13 @@ class CategoryController(
     fun getAll(
         @RequestParam page: Int,
         @RequestParam pageSize: Int
-    ): List<CategoryResponse> {
+    ): List<CategoryDTO> {
         val list = categoryService.getAll(page, pageSize);
-        return list.map { CategoryResponse(it.name) }
+        return list.map { CategoryDTO(it.name) }
     }
 
     @PostMapping("/create")
-    fun create(@RequestBody request: CreateCategoryRequest): ResponseEntity<Unit> {
+    fun create(@RequestBody request: CreateRequest): ResponseEntity<Unit> {
         val category = Category(request.name);
         val status = if (categoryService.create(category)) {
             HttpStatus.OK
@@ -38,8 +39,8 @@ class CategoryController(
     }
 
     @PatchMapping("/update")
-    fun update(@RequestBody request: UpdateCategoryRequest): ResponseEntity<Unit> {
-        val new = Category(request.newName);
+    fun update(@RequestBody request: UpdateRequest): ResponseEntity<Unit> {
+        val new = Category(request.new.name);
         val status = if (categoryService.update(request.oldName, new)) {
             HttpStatus.OK
         } else {
