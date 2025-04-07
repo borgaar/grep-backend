@@ -48,7 +48,7 @@ class SecurityConfig(private val userRepository: UserRepository) {
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) } // No session, only JWT
             .authorizeHttpRequests {
                 it
-                    .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()  // Allow register & login
+                    .requestMatchers("/api/auth/register", "/api/auth/login", "/v3/api-docs").permitAll()  // Allow register & login
                     .anyRequest().authenticated() // Protect other endpoints
             }.addFilterBefore(JWTAuthenticationFilter(), UsernamePasswordAuthenticationFilter::class.java)
         return http.build()
