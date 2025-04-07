@@ -5,6 +5,7 @@ import org.ntnu.grepapp.model.Category
 import org.ntnu.grepapp.service.CategoryService
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -16,41 +17,44 @@ class CategoryController(
 ) {
     private val logger = LogManager.getLogger(this::class::java);
 
-    @GetMapping("/get")
-    fun getAll(@RequestBody request: PaginationDetail): ResponseEntity<List<CategoryResponse>> {
-        val list = categoryService.getAll(request.page, request.pageSize);
-        return ResponseEntity.ok(list.map { CategoryResponse(it.name) })
+    @GetMapping
+    fun getAll(
+        @RequestParam page: Int,
+        @RequestParam pageSize: Int
+    ): List<CategoryResponse> {
+        val list = categoryService.getAll(page, pageSize);
+        return list.map { CategoryResponse(it.name) }
     }
 
     @PostMapping("/create")
-    fun create(@RequestBody request: CreateCategoryRequest): ResponseEntity<CategoryResponse> {
+    fun create(@RequestBody request: CreateCategoryRequest): ResponseEntity<Unit> {
         val category = Category(request.name);
-        logger.log(Level.INFO, request.name);
-        return if (categoryService.create(category)) {
-            ResponseEntity.ok(CategoryResponse(category.name));
+        val status = if (categoryService.create(category)) {
+            HttpStatus.OK
         } else {
-            ResponseEntity.internalServerError().build();
+            HttpStatus.CONFLICT
         }
+        return ResponseEntity(status)
     }
 
     @PatchMapping("/update")
-    fun update(@RequestBody request: UpdateCategoryRequest): ResponseEntity<CategoryResponse> {
-        val oldCategory = Category(request.oldName);
-        val newCategory = Category(request.newName);
-        return if (categoryService.update(oldCategory, newCategory)) {
-            ResponseEntity.ok(CategoryResponse(newCategory.name));
+    fun update(@RequestBody request: UpdateCategoryRequest): ResponseEntity<Unit> {
+        val new = Category(request.newName);
+        val status = if (categoryService.update(request.oldName, new)) {
+            HttpStatus.OK
         } else {
-            ResponseEntity.internalServerError().build();
+            HttpStatus.CONFLICT
         }
+        return ResponseEntity(status)
     }
 
     @DeleteMapping("/delete/{name}")
-    fun delete(@PathVariable name: String): ResponseEntity<CategoryResponse> {
-        val category = Category(name);
-        return if (categoryService.delete(category)) {
-            ResponseEntity.ok(CategoryResponse(category.name));
+    fun delete(@PathVariable name: String): ResponseEntity<Unit> {
+        val status = if (categoryService.delete(name)) {
+            HttpStatus.OK
         } else {
-            ResponseEntity.internalServerError().build();
+            HttpStatus.NOT_FOUND
         }
+        return ResponseEntity(status)
     }
 }

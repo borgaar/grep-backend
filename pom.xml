@@ -59,6 +59,12 @@
             <version>3.41.2.2</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <version>9.2.0</version>
+        </dependency>
+
         <!-- Hibernate SQLite Dialect -->
         <dependency>
             <groupId>org.hibernate.orm</groupId>

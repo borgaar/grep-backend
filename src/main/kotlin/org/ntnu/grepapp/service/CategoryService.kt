@@ -12,30 +12,18 @@ class CategoryService (
 ){
 
     fun create(category: Category): Boolean {
-        return try {
-            categoryRepository.create(category);
-        } catch (ex: Exception) {
-            false;
-        }
+        return categoryRepository.create(category)
     }
 
     fun getAll(page: Int, pageSize: Int): List<Category> {
         return categoryRepository.getAll(page, pageSize)
     }
 
-    fun delete(category: Category): Boolean {
-        return try {
-            categoryRepository.delete(category);
-        } catch (ex: Exception) {
-            false;
-        }
+    fun delete(name: String): Boolean {
+        return categoryRepository.delete(name)
     }
 
-    fun update(category: Category, newCategory: Category): Boolean {
-        return try {
-            categoryRepository.update(category, newCategory);
-        } catch (ex: Exception) {
-            false;
-        }
+    fun update(name: String, new: Category): Boolean {
+        return categoryRepository.update(name, new)
     }
 }

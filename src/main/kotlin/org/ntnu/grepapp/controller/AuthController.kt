@@ -5,6 +5,8 @@ import org.ntnu.grepapp.dto.UserRegisterRequest
 import org.ntnu.grepapp.model.RegisterUser
 import org.ntnu.grepapp.service.AuthService
 import org.apache.logging.log4j.LogManager
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -16,20 +18,23 @@ class AuthController(
     private val logger = LogManager.getLogger(this::class::java);
 
     @PostMapping("/register")
-    fun register(@RequestBody request: UserRegisterRequest): AuthResponse {
+    @ResponseStatus(HttpStatus.CREATED)
+    fun register(@RequestBody request: UserRegisterRequest): ResponseEntity<AuthResponse> {
         val user = RegisterUser(
             phone = request.phone,
             passwordRaw = request.password,
             firstName = request.firstName,
             lastName = request.lastName,
         )
-        val newUser = authService.register(user)
-        return AuthResponse(authService.generateToken(newUser!!))
+        val maybeUser = authService.register(user)
+        val newUser = maybeUser ?: return ResponseEntity(HttpStatus.CONFLICT)
+        return ResponseEntity(AuthResponse(authService.generateToken(newUser)), HttpStatus.CREATED)
     }
 
     @PostMapping("/login")
-    fun login(@RequestBody request: UserRegisterRequest): AuthResponse {
-        val user = authService.login(request.phone, request.password)
-        return AuthResponse(authService.generateToken(user!!))
+    fun login(@RequestBody request: UserRegisterRequest): ResponseEntity<AuthResponse> {
+        val user = authService.login(request.phone, request.password) ?: return ResponseEntity(HttpStatus.NOT_FOUND)
+        val body = AuthResponse(authService.generateToken(user))
+        return ResponseEntity.ok(body)
     }
 }
