@@ -28,7 +28,7 @@ class ListingController(
             listingsOut.add(dto)
         }
 
-        return ResponseEntity(listingsOut, HttpStatus.OK)
+        return ResponseEntity.ok(listingsOut)
     }
 
     @GetMapping("/{id}")
@@ -37,15 +37,12 @@ class ListingController(
 
         val responseListing = toListingDTO(listing)
 
-        return ResponseEntity(
-            responseListing,
-            HttpStatus.OK
-        )
+        return ResponseEntity.ok(responseListing)
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun create(@RequestBody request: ListingCreateRequest): HttpStatus {
+    fun create(@RequestBody request: ListingCreateRequest): ResponseEntity<Unit> {
 
         val new = NewListing(
             title = request.title,
@@ -57,29 +54,31 @@ class ListingController(
             lon = request.location.lon
         )
 
-        val created = service.create(
-            new
-        )
+        val created = service.create(new)
 
-        return if (created) {
+        val status = if (created) {
             HttpStatus.OK
         } else {
             HttpStatus.CONFLICT
         }
+
+        return ResponseEntity(status)
     }
 
     @DeleteMapping("/{id}")
-    fun delete(@PathVariable id: UUID): HttpStatus {
+    fun delete(@PathVariable id: UUID): ResponseEntity<Unit> {
         val deleted = service.delete(id)
-        return if (deleted) {
+        val status = if (deleted) {
             HttpStatus.OK
         } else {
             HttpStatus.NOT_FOUND
         }
+
+        return ResponseEntity(status)
     }
 
     @PatchMapping("/{id}")
-    fun update(@PathVariable id: UUID, @RequestBody listing: ListingUpdateRequest): HttpStatus {
+    fun update(@PathVariable id: UUID, @RequestBody listing: ListingUpdateRequest): ResponseEntity<Unit> {
         val new = UpdateListing(
             title = listing.title,
             description = listing.description,
@@ -90,17 +89,20 @@ class ListingController(
         )
 
         val updated = service.update(id, new)
-        return if (updated) {
+        val status = if (updated) {
             HttpStatus.OK
         } else {
             HttpStatus.NOT_FOUND
         }
+
+        return ResponseEntity(status)
     }
 
     @PostMapping("/reserve/{id}")
-    fun reserve(@PathVariable id: UUID): HttpStatus {
+    fun reserve(@PathVariable id: UUID): ResponseEntity<Unit> {
         // TODO
-        return HttpStatus.OK
+        val status = HttpStatus.OK
+        return ResponseEntity(status)
     }
 
     @PostMapping("/bookmarked")

@@ -32,8 +32,9 @@ class AuthController(
     }
 
     @PostMapping("/login")
-    fun login(@RequestBody request: UserRegisterRequest): AuthResponse {
-        val user = authService.login(request.phone, request.password)
-        return AuthResponse(authService.generateToken(user!!))
+    fun login(@RequestBody request: UserRegisterRequest): ResponseEntity<AuthResponse> {
+        val user = authService.login(request.phone, request.password) ?: return ResponseEntity(HttpStatus.NOT_FOUND)
+        val body = AuthResponse(authService.generateToken(user))
+        return ResponseEntity.ok(body)
     }
 }

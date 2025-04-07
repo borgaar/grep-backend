@@ -18,7 +18,7 @@ CREATE TABLE listings
 (
     id          CHAR(36) PRIMARY KEY NOT NULL,
     author      VARCHAR(20)          NOT NULL REFERENCES users (phone) ON DELETE CASCADE,
-    category    TEXT                 NOT NULL, -- add PK to categories
+    category    VARCHAR(255)         NOT NULL REFERENCES categories (name) ON UPDATE CASCADE,
     title       TEXT                 NOT NULL,
     description TEXT                 NOT NULL,
     price       INT                  NOT NULL,
@@ -28,14 +28,17 @@ CREATE TABLE listings
 
 -- Password is 123
 INSERT INTO users (phone, password_hash, first_name, last_name)
-SELECT '99999999', '$2a$10$BbjEkDurDk31upVmMjM.A.JFIT57TQFQr6m./a9tk9ftjAu2rNMay', 'Brotherman', 'Testern';
+VALUE ('99999999', '$2a$10$BbjEkDurDk31upVmMjM.A.JFIT57TQFQr6m./a9tk9ftjAu2rNMay', 'Brotherman', 'Testern');
+
+INSERT INTO categories (name)
+VALUE ('Ting og tang');
 
 INSERT INTO listings (id, author, category, title, description, price, lat, lon)
-SELECT '084846ae-3ddc-4ae8-8d8c-1ed7c4ab1922',
+VALUE ('084846ae-3ddc-4ae8-8d8c-1ed7c4ab1922',
        '99999999',
-       'Ting',
+       'Ting og tang',
        'Testsalg',
        'En veldig betydelig beskrivelse.',
        42,
        71.00,
-       71.00;
+       71.00);
