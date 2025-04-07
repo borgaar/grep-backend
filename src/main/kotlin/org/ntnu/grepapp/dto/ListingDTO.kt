@@ -9,12 +9,6 @@ data class ListingDTO(
     val category: CategoryDTO,
     val author: AuthorDTO
 ) {
-
-    data class CategoryDTO(
-        val id: String,
-        val name: String
-    )
-
     data class AuthorDTO(
         val id: String,
         val phone: String,
