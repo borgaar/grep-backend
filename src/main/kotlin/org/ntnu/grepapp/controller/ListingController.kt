@@ -1,7 +1,9 @@
 package org.ntnu.grepapp.controller
 
 import org.ntnu.grepapp.dto.BookmarkedListingDTO
+import org.ntnu.grepapp.dto.CategoryDTO
 import org.ntnu.grepapp.dto.ListingDTO
+import org.ntnu.grepapp.dto.LocationDTO
 import org.ntnu.grepapp.dto.listing.*
 import org.ntnu.grepapp.mapping.toListingDTO
 import org.ntnu.grepapp.model.NewListing
@@ -116,9 +118,31 @@ class ListingController(
     }
 
     @PostMapping("/bookmarked")
-    fun bookmarked(): List<BookmarkedListingDTO> {
-        // TODO
-        val listings = ArrayList<BookmarkedListingDTO>()
-        return listings
+    fun bookmarked(
+        @RequestParam("page", defaultValue = "0") page: Int,
+        @RequestParam("pageSize", defaultValue = "5") pageSize: Int,
+    ): List<ListingDTO> {
+        return service.getBookmarked(authService.getCurrentUser(), PageRequest.of(page, pageSize))
+            .map {
+                ListingDTO(
+                    it.id.toString(),
+                    it.title,
+                    it.description,
+                    LocationDTO(
+                        it.lat,
+                        it.lon
+                    ),
+                    it.price,
+                    CategoryDTO(
+                        it.category.name
+                    ),
+                    ListingDTO.AuthorDTO(
+                        it.author.phone,
+                        it.author.phone,
+                        it.author.firstName,
+                        it.author.lastName,
+                    ),
+                )
+            };
     }
 }

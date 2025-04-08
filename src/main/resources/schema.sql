@@ -37,6 +37,13 @@ CREATE TABLE messages
     timestamp    TIMESTAMP   NOT NULL
 );
 
+CREATE TABLE bookmarks
+(
+    user_id    VARCHAR(20) NOT NULL REFERENCES users (phone) ON UPDATE CASCADE,
+    listing_id CHAR(36)    NOT NULL REFERENCES listings (id) ON UPDATE CASCADE,
+    PRIMARY KEY (user_id, listing_id)
+);
+
 -- Password is 123
 INSERT INTO users (phone, password_hash, first_name, last_name, role)
     VALUE ('99999999', '$2a$10$BbjEkDurDk31upVmMjM.A.JFIT57TQFQr6m./a9tk9ftjAu2rNMay', 'Brotherman', 'Testern', 'admin');

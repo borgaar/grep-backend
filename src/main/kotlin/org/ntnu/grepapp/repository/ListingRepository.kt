@@ -100,5 +100,31 @@ class ListingRepository(
         return affected != 0
     }
 
+    fun getBookmarked(userId: String, pageable: Pageable): List<Listing> {
+        val sql = """
+            SELECT 
+                l.id, l.title, l.description, l.price, l.lat, l.lon,
+                l.category, u.phone, u.first_name, u.last_name
+            FROM bookmarks b 
+                JOIN listings l ON b.listing_id = l.id
+                JOIN users u ON l.author = u.phone
+            WHERE b.user_id = ? 
+            LIMIT ? OFFSET ?
+        """;
+        return jdbc.query(sql, rowMapper, userId, pageable.pageSize, pageable.offset);
+    }
 
+    fun createBookmark(listingId: UUID, userId: String): Boolean {
+        val sql = """
+            INSERT INTO bookmarks (user_id, listing_id) VALUES (?, ?)
+        """;
+        return jdbc.update(sql, userId, listingId) != 0;
+    }
+
+    fun deleteBookmark(listingId: UUID, userId: String): Boolean {
+        val sql = """
+            DELETE FROM bookmarks WHERE user_id = ? AND listing_id = ?;
+        """;
+        return jdbc.update(sql, userId, listingId) != 0;
+    }
 }
