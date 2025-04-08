@@ -68,7 +68,7 @@ class ListingController(
     @GetMapping("/personal")
     fun getOwnListings(
         @RequestParam(defaultValue = "0") page: Int,
-        @RequestParam(defaultValue = "5") pageSize: Int,
+        @RequestParam(defaultValue = "100") pageSize: Int,
     ): ResponseEntity<List<ListingDTO>> {
         val listings = service.getListingsForUserId(authService.getCurrentUser(), PageRequest.of(page, pageSize));
         return ResponseEntity.ok(

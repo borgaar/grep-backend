@@ -159,14 +159,15 @@ class ListingRepository(
         val sql = """
             SELECT
                 l.id, l.title, l.description, l.price, l.created_at, l.lat, l.lon,
-                l.category, u.phone, u.first_name, u.last_name
+                l.category, u.phone, u.first_name, u.last_name, b.user_id IS NOT NULL AS is_bookmarked
             FROM listings l
                 JOIN users u ON l.author = u.phone
+                LEFT JOIN bookmarks b ON b.listing_id = l.id AND b.user_id = ?
             WHERE u.phone = ?
             LIMIT ? OFFSET ?;
         """;
 
-        return jdbc.query(sql, rowMapper, userId, page.pageSize, page.offset)
+        return jdbc.query(sql, rowMapper, userId, userId, page.pageSize, page.offset)
     }
 
     fun getBookmarked(userId: String, pageable: Pageable): List<BookmarkedListing> {
