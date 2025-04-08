@@ -47,18 +47,41 @@ class ListingRepository(
         }
     }
 
-    fun getPaginated(page: Pageable): List<Listing> {
+    fun filterPaginate(page: Pageable, filter: ListingFilter): List<Listing> {
+        val sorting = when (filter.sorting) {
+            "price" -> "l.price"
+            else -> "l.id"
+        }
+
+        val sortingDir = when (filter.sortingDirection) {
+            "desc" -> "DESC"
+            else -> "ASC"
+        }
+
         val sql = """
             SELECT
                 l.id, l.title, l.description, l.price, l.lat, l.lon,
                 l.category, u.phone, u.first_name, u.last_name
             FROM listings l
                 JOIN users u ON l.author = u.phone
-            ORDER BY l.id DESC
+            WHERE ? <= l.price AND l.price <= ?
+                AND (l.category = ? OR ? IS NULL)
+                AND Locate(?, l.title) != 0 -- Locate gir 1 dersom argumentet er tom string
+            ORDER BY $sorting $sortingDir, l.id
             LIMIT ?
             OFFSET ?
         """
-        return jdbc.query(sql, rowMapper, page.pageSize, page.offset)
+        return jdbc.query(
+            sql,
+            rowMapper,
+            filter.priceLower ?: 0,
+            filter.priceUpper ?: Int.MAX_VALUE,
+            filter.category,
+            filter.category,
+            filter.titleQuery ?: "",
+            page.pageSize,
+            page.offset
+        )
     }
 
     fun create(listing: NewListing): Boolean {
