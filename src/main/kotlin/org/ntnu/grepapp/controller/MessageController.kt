@@ -2,7 +2,7 @@ package org.ntnu.grepapp.controller
 
 import org.apache.logging.log4j.LogManager
 import org.ntnu.grepapp.dto.chat.*
-import org.ntnu.grepapp.model.ChatMessage
+import org.ntnu.grepapp.mapping.toChatContactDTO
 import org.ntnu.grepapp.service.MessageService
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
@@ -50,5 +50,16 @@ class MessageController(
             timestamp = it.timestamp,
             content = it.content,
         ) }
+    }
+
+    @GetMapping("/contacts")
+    fun getContacts(
+        @RequestParam(defaultValue = "0") page: Int, @RequestParam(defaultValue = "5") pageSize: Int
+    ): List<ChatContactDTO> {
+        logger.info("Get contacts");
+        logger.info(page.toString(), pageSize.toString());
+        return messageService.getContacts(
+            PageRequest.of(page, pageSize)
+        ).map { toChatContactDTO(it) }
     }
 }
