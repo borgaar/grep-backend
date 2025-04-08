@@ -10,12 +10,12 @@ import java.util.*
 class ListingService(
     private val repository: ListingRepository,
 ) {
-    fun find(id: UUID): Listing? {
-        return repository.find(id)
+    fun find(id: UUID, userId: String): Listing? {
+        return repository.find(id, userId)
     }
 
-    fun getPaginatedAndFiltered(page: Pageable, filter: ListingFilter): List<Listing> {
-        return repository.filterPaginate(page, filter)
+    fun getPaginatedAndFiltered(page: Pageable, filter: ListingFilter, userId: String): List<Listing> {
+        return repository.filterPaginate(page, filter, userId)
     }
 
     fun create(listing: NewListing): Boolean {

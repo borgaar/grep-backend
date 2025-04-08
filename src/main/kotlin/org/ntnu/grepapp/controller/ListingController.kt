@@ -45,7 +45,7 @@ class ListingController(
             sorting = sort,
             sortingDirection = sortDirection,
         )
-        val listings = service.getPaginatedAndFiltered(PageRequest.of(page, size), filter)
+        val listings = service.getPaginatedAndFiltered(PageRequest.of(page, size), filter, authService.getCurrentUser())
 
         val listingsOut = ArrayList<ListingDTO>()
         for (l in listings) {
@@ -58,7 +58,7 @@ class ListingController(
 
     @GetMapping("/{id}")
     fun get(@PathVariable id: UUID): ResponseEntity<ListingDTO> {
-        val listing = service.find(id) ?: return ResponseEntity(HttpStatus.NOT_FOUND)
+        val listing = service.find(id, authService.getCurrentUser()) ?: return ResponseEntity(HttpStatus.NOT_FOUND)
 
         val responseListing = toListingDTO(listing)
 
@@ -139,7 +139,7 @@ class ListingController(
     @GetMapping("/bookmarked")
     fun bookmarked(
         @RequestParam("page", defaultValue = "0") page: Int,
-        @RequestParam("pageSize", defaultValue = "5") pageSize: Int,
+        @RequestParam("pageSize", defaultValue = "100") pageSize: Int,
     ): List<BookmarkedListingDTO> {
         return service.getBookmarked(authService.getCurrentUser(), PageRequest.of(page, pageSize))
             .map {
