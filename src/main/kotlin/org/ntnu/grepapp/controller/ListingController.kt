@@ -4,6 +4,7 @@ import org.ntnu.grepapp.dto.BookmarkedListingDTO
 import org.ntnu.grepapp.dto.ListingDTO
 import org.ntnu.grepapp.dto.listing.*
 import org.ntnu.grepapp.mapping.toListingDTO
+import org.ntnu.grepapp.model.ListingFilter
 import org.ntnu.grepapp.model.NewListing
 import org.ntnu.grepapp.model.UpdateListing
 import org.ntnu.grepapp.service.AuthService
@@ -22,8 +23,17 @@ class ListingController(
     val authService: AuthService,
 ) {
     @GetMapping
-    fun getPaginated(@RequestParam page: Int, @RequestParam size: Int): ResponseEntity<List<ListingDTO>> {
-        val listings = service.getPaginated(PageRequest.of(page, size))
+    fun getPaginated(
+        @RequestParam page: Int,
+        @RequestParam size: Int,
+        @RequestParam priceLower: Int?,
+        @RequestParam priceUpper: Int?,
+    ): ResponseEntity<List<ListingDTO>> {
+        val filter = ListingFilter(
+            priceLower = priceLower,
+            priceUpper =  priceUpper
+        )
+        val listings = service.getPaginatedAndFiltered(PageRequest.of(page, size), filter)
 
         val listingsOut = ArrayList<ListingDTO>()
         for (l in listings) {

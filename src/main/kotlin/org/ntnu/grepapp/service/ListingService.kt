@@ -1,6 +1,7 @@
 package org.ntnu.grepapp.service
 
 import org.ntnu.grepapp.model.Listing
+import org.ntnu.grepapp.model.ListingFilter
 import org.ntnu.grepapp.model.NewListing
 import org.ntnu.grepapp.model.UpdateListing
 import org.ntnu.grepapp.repository.ListingRepository
@@ -16,8 +17,8 @@ class ListingService(
         return repository.find(id)
     }
 
-    fun getPaginated(page: Pageable): List<Listing> {
-        return repository.getPaginated(page)
+    fun getPaginatedAndFiltered(page: Pageable, filter: ListingFilter): List<Listing> {
+        return repository.filterPaginate(page, filter)
     }
 
     fun create(listing: NewListing): Boolean {
