@@ -1,10 +1,6 @@
 package org.ntnu.grepapp.service
 
-import org.ntnu.grepapp.model.Bookmark
-import org.ntnu.grepapp.model.Listing
-import org.ntnu.grepapp.model.ListingFilter
-import org.ntnu.grepapp.model.NewListing
-import org.ntnu.grepapp.model.UpdateListing
+import org.ntnu.grepapp.model.*
 import org.ntnu.grepapp.repository.ListingRepository
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -34,7 +30,7 @@ class ListingService(
         return repository.update(id, new)
     }
 
-    fun getBookmarked(userId: String, pageable: Pageable): List<Listing> {
+    fun getBookmarked(userId: String, pageable: Pageable): List<BookmarkedListing> {
         return repository.getBookmarked(userId, pageable)
     }
 

@@ -136,14 +136,14 @@ class ListingController(
         return ResponseEntity(status)
     }
 
-    @PostMapping("/bookmarked")
+    @GetMapping("/bookmarked")
     fun bookmarked(
         @RequestParam("page", defaultValue = "0") page: Int,
         @RequestParam("pageSize", defaultValue = "5") pageSize: Int,
     ): List<ListingDTO> {
         return service.getBookmarked(authService.getCurrentUser(), PageRequest.of(page, pageSize))
             .map {
-                toListingDTO(it)
+                toListingDTO(it.listing)
             };
     }
 }

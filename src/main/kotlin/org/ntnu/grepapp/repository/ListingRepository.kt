@@ -33,6 +33,13 @@ class ListingRepository(
         )
     }
 
+    private val bookmarkedMapper = RowMapper { rs, i ->
+        BookmarkedListing(
+            listing = rowMapper.mapRow(rs, i)!!,
+            bookmarkedAt = rs.getTimestamp("bookmarked_at").toLocalDateTime()
+        )
+    }
+
     fun find(id: UUID): Listing? {
         val sql = """
             SELECT
@@ -143,18 +150,18 @@ class ListingRepository(
         return affected != 0
     }
 
-    fun getBookmarked(userId: String, pageable: Pageable): List<Listing> {
+    fun getBookmarked(userId: String, pageable: Pageable): List<BookmarkedListing> {
         val sql = """
             SELECT 
                 l.id, l.title, l.description, l.price, l.created_at, l.lat, l.lon,
-                l.category, u.phone, u.first_name, u.last_name
+                l.category, u.phone, u.first_name, u.last_name, b.created_at AS bookmarked_at
             FROM bookmarks b 
                 JOIN listings l ON b.listing_id = l.id
                 JOIN users u ON l.author = u.phone
             WHERE b.user_id = ? 
             LIMIT ? OFFSET ?
         """;
-        return jdbc.query(sql, rowMapper, userId, pageable.pageSize, pageable.offset);
+        return jdbc.query(sql, bookmarkedMapper, userId, pageable.pageSize, pageable.offset);
     }
 
     fun createBookmark(listingId: UUID, userId: String): Boolean {
