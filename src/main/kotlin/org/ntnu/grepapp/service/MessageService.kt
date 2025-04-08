@@ -4,8 +4,7 @@ import org.ntnu.grepapp.dto.CreateChatMessage
 import org.ntnu.grepapp.model.ChatMessage
 import org.ntnu.grepapp.repository.MessageRepository
 import org.apache.logging.log4j.LogManager
-import org.ntnu.grepapp.dto.PaginationDetail
-import org.ntnu.grepapp.service.AuthService
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
 @Service
@@ -25,7 +24,7 @@ class MessageService (
         );
     }
 
-    fun getHistory(pagination: PaginationDetail, recipientId: String): List<ChatMessage> {
-        return repository.getList(pagination, recipientId, authService.getCurrentUser());
+    fun getHistory(page: Pageable, recipientId: String): List<ChatMessage> {
+        return repository.getList(page, recipientId, authService.getCurrentUser());
     }
 }

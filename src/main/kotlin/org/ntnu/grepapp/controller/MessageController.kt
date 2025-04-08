@@ -1,18 +1,17 @@
 package org.ntnu.grepapp.controller
 
-import org.ntnu.grepapp.service.MessageService
-import org.ntnu.grepapp.dto.CreateChatMessage
-import org.ntnu.grepapp.model.ChatMessage
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
-import org.ntnu.grepapp.dto.PaginationDetail
-import org.springframework.stereotype.Controller
+import org.ntnu.grepapp.dto.CreateChatMessage
+import org.ntnu.grepapp.model.ChatMessage
+import org.ntnu.grepapp.service.MessageService
+import org.springframework.data.domain.PageRequest
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/message")
 @CrossOrigin(origins = ["http://localhost:5173", "*"])
-class MessageController (
+class MessageController(
     private val messageService: MessageService
 ) {
     private val logger = LogManager.getLogger(this::class.java)
@@ -32,9 +31,7 @@ class MessageController (
         logger.log(Level.INFO, "Get history");
         logger.log(Level.INFO, page.toString(), pageSize.toString(), otherUser);
         return messageService.getHistory(
-            PaginationDetail(
-                page, pageSize
-            ), otherUser
+            PageRequest.of(page, pageSize), otherUser
         )
     }
 }

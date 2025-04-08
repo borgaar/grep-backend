@@ -2,8 +2,7 @@ package org.ntnu.grepapp.service
 
 import org.ntnu.grepapp.model.Category
 import org.ntnu.grepapp.repository.CategoryRepository
-import org.ntnu.grepapp.repository.UserRepository
-import org.ntnu.grepapp.security.JwtUtil
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
 @Service
@@ -15,8 +14,8 @@ class CategoryService (
         return categoryRepository.create(category)
     }
 
-    fun getAll(page: Int, pageSize: Int): List<Category> {
-        return categoryRepository.getAll(page, pageSize)
+    fun getAll(page: Pageable): List<Category> {
+        return categoryRepository.getAll(page)
     }
 
     fun delete(name: String): Boolean {

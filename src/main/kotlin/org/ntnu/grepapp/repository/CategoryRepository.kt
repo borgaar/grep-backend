@@ -4,6 +4,7 @@ import org.ntnu.grepapp.model.Category
 import org.ntnu.grepapp.model.User
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
+import org.springframework.data.domain.Pageable
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Repository
@@ -34,8 +35,8 @@ class CategoryRepository (private var jdbc: JdbcTemplate)
         return jdbc.update(sql, newCategory.name, name) != 0
     }
 
-    fun getAll(page: Int, pageSize: Int): List<Category> {
+    fun getAll(page: Pageable): List<Category> {
         val sql = "SELECT * FROM categories ORDER BY name LIMIT ? OFFSET ?;";
-        return jdbc.query(sql, rowMapper, pageSize, page)
+        return jdbc.query(sql, rowMapper, page.pageSize, page.offset)
     }
 }

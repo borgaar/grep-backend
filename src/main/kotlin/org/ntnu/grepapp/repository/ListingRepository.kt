@@ -2,6 +2,7 @@ package org.ntnu.grepapp.repository
 
 import org.ntnu.grepapp.model.*
 import org.springframework.dao.EmptyResultDataAccessException
+import org.springframework.data.domain.Pageable
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Repository
@@ -46,7 +47,7 @@ class ListingRepository(
         }
     }
 
-    fun getPaginated(offset: Int, limit: Int): List<Listing> {
+    fun getPaginated(page: Pageable): List<Listing> {
         val sql = """
             SELECT
                 l.id, l.title, l.description, l.price, l.lat, l.lon,
@@ -57,7 +58,7 @@ class ListingRepository(
             LIMIT ?
             OFFSET ?
         """
-        return jdbc.query(sql, rowMapper, limit, offset)
+        return jdbc.query(sql, rowMapper, page.pageSize, page.offset)
     }
 
     fun create(listing: NewListing): Boolean {

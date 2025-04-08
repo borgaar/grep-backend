@@ -8,6 +8,7 @@ import org.ntnu.grepapp.model.NewListing
 import org.ntnu.grepapp.model.UpdateListing
 import org.ntnu.grepapp.service.AuthService
 import org.ntnu.grepapp.service.ListingService
+import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -22,7 +23,7 @@ class ListingController(
 ) {
     @GetMapping
     fun getPaginated(@RequestParam page: Int, @RequestParam size: Int): ResponseEntity<List<ListingDTO>> {
-        val listings = service.getPaginated(page, size)
+        val listings = service.getPaginated(PageRequest.of(page, size))
 
         val listingsOut = ArrayList<ListingDTO>()
         for (l in listings) {
