@@ -57,7 +57,7 @@ class ListingRepository(
                 JOIN users u ON l.author = u.phone
             WHERE ? <= l.price AND l.price <= ?
                 AND (l.category = ? OR ? IS NULL)
-                AND Locate(?, l.title) != 0 -- Locate gir 1 der argumentet er tom string
+                AND Locate(?, l.title) != 0 -- Locate gir 1 dersom argumentet er tom string
             ORDER BY l.id DESC
             LIMIT ?
             OFFSET ?
