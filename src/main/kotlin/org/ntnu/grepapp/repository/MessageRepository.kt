@@ -6,6 +6,8 @@ import org.springframework.data.domain.Pageable
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Repository
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.UUID
 
 @Repository
@@ -18,19 +20,18 @@ class MessageRepository (
             senderId = rs.getString("sender_id"),
             recipientId = rs.getString("recipient_id"),
             content = rs.getString("content"),
-            timestamp = rs.getString("timestamp")
+            timestamp = LocalDateTime.parse(rs.getString("timestamp"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
         )
     }
 
     private val logger = LogManager.getLogger(this::class::java);
 
-    fun create(message: ChatMessage): ChatMessage {
-        val uuid = UUID.randomUUID().toString();
+    fun create(message: ChatMessage) {
         val sql = """
             INSERT INTO messages(id, sender_id, recipient_id, content, timestamp)
             VALUES (?, ?, ?, ?, ?)
             """
-        jdbc.update(sql, uuid, message.senderId, message.recipientId, message.content, message.timestamp)
+        jdbc.update(sql, message.id, message.senderId, message.recipientId, message.content, message.timestamp)
     }
 
     fun getList(pagination: Pageable, senderId: String, recipientId: String): List<ChatMessage> {

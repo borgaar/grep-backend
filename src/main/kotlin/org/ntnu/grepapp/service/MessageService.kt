@@ -1,9 +1,9 @@
 package org.ntnu.grepapp.service
 
-import org.ntnu.grepapp.dto.chat.CreateChatMessage
 import org.ntnu.grepapp.model.ChatMessage
 import org.ntnu.grepapp.repository.MessageRepository
 import org.apache.logging.log4j.LogManager
+import org.ntnu.grepapp.dto.chat.SendRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
@@ -14,14 +14,21 @@ class MessageService (
 ) {
     private val logger = LogManager.getLogger(this::class::java);
 
-    fun create(message: CreateChatMessage) {
-        repository.create(
-            ChatMessage(
-                senderId = authService.getCurrentUser(),
-                recipientId = message.recipientId,
-                content = message.content,
-            )
-        );
+    fun create(message: SendRequest): ChatMessage? {
+        val chatMessage = ChatMessage(
+            senderId = authService.getCurrentUser(),
+            recipientId = message.recipientId,
+            content = message.content,
+        )
+
+        try {
+            repository.create(chatMessage);
+            return chatMessage;
+        } catch (e: Exception) {
+            logger.error(e.message, e);
+            return null;
+        }
+
     }
 
     fun getHistory(page: Pageable, recipientId: String): List<ChatMessage> {
