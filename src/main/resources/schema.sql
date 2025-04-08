@@ -33,7 +33,7 @@ CREATE TABLE messages
     sender_id    VARCHAR(20) NOT NULL REFERENCES users (phone) ON UPDATE CASCADE,
     recipient_id VARCHAR(20) NOT NULL REFERENCES users (phone) ON UPDATE CASCADE,
     content      TEXT        NOT NULL,
-    timestamp    TIMESTAMP   NOT NULL
+    timestamp    TIMESTAMP   NOT NULL DEFAULT NOW()
 );
 
 -- Password is 123

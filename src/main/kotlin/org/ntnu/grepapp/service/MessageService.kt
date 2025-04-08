@@ -1,6 +1,6 @@
 package org.ntnu.grepapp.service
 
-import org.ntnu.grepapp.dto.CreateChatMessage
+import org.ntnu.grepapp.dto.chat.CreateChatMessage
 import org.ntnu.grepapp.model.ChatMessage
 import org.ntnu.grepapp.repository.MessageRepository
 import org.apache.logging.log4j.LogManager
