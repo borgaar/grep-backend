@@ -5,6 +5,7 @@ import org.ntnu.grepapp.dto.UserRegisterRequest
 import org.ntnu.grepapp.model.RegisterUser
 import org.ntnu.grepapp.service.AuthService
 import org.apache.logging.log4j.LogManager
+import org.ntnu.grepapp.dto.UserLoginRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -32,7 +33,7 @@ class AuthController(
     }
 
     @PostMapping("/login")
-    fun login(@RequestBody request: UserRegisterRequest): ResponseEntity<AuthResponse> {
+    fun login(@RequestBody request: UserLoginRequest): ResponseEntity<AuthResponse> {
         val user = authService.login(request.phone, request.password) ?: return ResponseEntity(HttpStatus.NOT_FOUND)
         val body = AuthResponse(authService.generateToken(user))
         return ResponseEntity.ok(body)

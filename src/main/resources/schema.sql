@@ -1,5 +1,6 @@
 DROP TABLE IF EXISTS listings;
 DROP TABLE IF EXISTS categories;
+DROP TABLE IF EXISTS messages;
 DROP TABLE IF EXISTS users;
 
 CREATE TABLE users
@@ -26,19 +27,32 @@ CREATE TABLE listings
     lon         DOUBLE               NOT NULL
 );
 
+CREATE TABLE messages
+(
+    id           CHAR(36)    NOT NULL PRIMARY KEY,
+    sender_id    VARCHAR(20) NOT NULL REFERENCES users (phone) ON UPDATE CASCADE,
+    recipient_id VARCHAR(20) NOT NULL REFERENCES users (phone) ON UPDATE CASCADE,
+    content      TEXT        NOT NULL,
+    timestamp    TIMESTAMP   NOT NULL
+);
+
 -- Password is 123
 INSERT INTO users (phone, password_hash, first_name, last_name)
-VALUE ('99999999', '$2a$10$BbjEkDurDk31upVmMjM.A.JFIT57TQFQr6m./a9tk9ftjAu2rNMay', 'Brotherman', 'Testern');
+    VALUE ('99999999', '$2a$10$BbjEkDurDk31upVmMjM.A.JFIT57TQFQr6m./a9tk9ftjAu2rNMay', 'Brotherman', 'Testern');
+
+-- Password is 456
+INSERT INTO users (phone, password_hash, first_name, last_name)
+    VALUE ('12345678', '$2a$10$yL3lpULoLJwKexGJNa1Rte1a7SryalnNN2oQwD0PjcGkWOqg5Q84e', 'Brur', 'Testingston');
 
 INSERT INTO categories (name)
-VALUE ('Ting og tang');
+    VALUE ('Ting og tang');
 
 INSERT INTO listings (id, author, category, title, description, price, lat, lon)
-VALUE ('084846ae-3ddc-4ae8-8d8c-1ed7c4ab1922',
-       '99999999',
-       'Ting og tang',
-       'Testsalg',
-       'En veldig betydelig beskrivelse.',
-       42,
-       71.00,
-       71.00);
+    VALUE ('084846ae-3ddc-4ae8-8d8c-1ed7c4ab1922',
+           '99999999',
+           'Ting og tang',
+           'Testsalg',
+           'En veldig betydelig beskrivelse.',
+           42,
+           71.00,
+           71.00);
