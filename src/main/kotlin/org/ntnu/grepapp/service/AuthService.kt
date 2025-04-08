@@ -35,7 +35,7 @@ class AuthService(
     }
 
     fun register(user: RegisterUser): User? {
-        val hashed = passwordEncoder.encode(user.passwordRaw)
+        val hashed = hashPassword(user.passwordRaw)
         println(hashed)
         if (userRepository.find(user.phone) != null) {
             return null
@@ -48,5 +48,20 @@ class AuthService(
         )
         userRepository.save(newUser);
         return newUser;
+    }
+
+    fun updatePassword(phone: String, oldPassword: String, newPassword: String) {
+        val user = userRepository.find(phone) ?: return;
+
+        if (passwordEncoder.matches(oldPassword, user.passwordHash)) {
+            user.passwordHash = hashPassword(newPassword)
+            userRepository.overwrite(phone, user)
+        } else {
+            throw IllegalArgumentException("Old password is incorrect")
+        }
+    }
+
+    private fun hashPassword(password: String): String {
+        return passwordEncoder.encode(password)
     }
 }

@@ -1,10 +1,9 @@
 package org.ntnu.grepapp.controller
 
+import org.apache.logging.log4j.LogManager
 import org.ntnu.grepapp.dto.auth.*
 import org.ntnu.grepapp.model.RegisterUser
 import org.ntnu.grepapp.service.AuthService
-import org.apache.logging.log4j.LogManager
-import org.ntnu.grepapp.model.User
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -29,17 +28,16 @@ class AuthController(
         val maybeUser = authService.register(user)
         val newUser = maybeUser ?: return ResponseEntity(HttpStatus.CONFLICT)
         val body = RegisterResponse(
-            authService.generateToken(newUser),
-            newUser.firstName,
-            newUser.lastName,
-            newUser.role
+            authService.generateToken(newUser), newUser.firstName, newUser.lastName, newUser.role
         )
         return ResponseEntity.ok(body)
     }
 
     @PostMapping("/login")
     fun login(@RequestBody request: LoginRequest): ResponseEntity<LoginResponse> {
-        val user = authService.login(request.phone, request.password) ?: return ResponseEntity(HttpStatus.NOT_FOUND)
+        val user = authService.login(request.phone, request.password) ?: return ResponseEntity(
+            HttpStatus.NOT_FOUND
+        )
         val body = LoginResponse(
             token = authService.generateToken(user),
             firstName = user.firstName,
@@ -47,5 +45,20 @@ class AuthController(
             role = "user",
         )
         return ResponseEntity.ok(body)
+    }
+
+    @PutMapping("/password")
+    fun updatePassword(
+        @RequestBody request: UpdatePassword
+    ): ResponseEntity<String> {
+        try {
+            authService.updatePassword(
+                authService.getCurrentUser(), request.oldPassword, request.newPassword
+            )
+        } catch (e: IllegalArgumentException) {
+            return ResponseEntity.badRequest().body(e.message)
+        }
+
+        return ResponseEntity.ok("Password was updated")
     }
 }
