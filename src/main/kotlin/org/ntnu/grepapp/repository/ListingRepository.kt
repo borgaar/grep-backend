@@ -2,6 +2,7 @@ package org.ntnu.grepapp.repository
 
 import org.ntnu.grepapp.model.*
 import org.springframework.dao.EmptyResultDataAccessException
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
@@ -58,29 +59,47 @@ class ListingRepository(
             else -> "ASC"
         }
 
-        val sql = """
+        val base = """
             SELECT
                 l.id, l.title, l.description, l.price, l.lat, l.lon,
                 l.category, u.phone, u.first_name, u.last_name
             FROM listings l
                 JOIN users u ON l.author = u.phone
             WHERE ? <= l.price AND l.price <= ?
-                AND (l.category = ? OR ? IS NULL)
-                AND Locate(?, l.title) != 0 -- Locate gir 1 dersom argumentet er tom string
+        """
+
+        val where = if (filter.categories.isNotEmpty()) {
+            val params = filter.categories.joinToString(",") { "?" }
+            "AND l.category IN ($params)"
+        } else {
+            "AND TRUE"
+        }
+
+        val sql = """
+            $base
+            $where
+                AND Locate(?, l.title) != 0
             ORDER BY $sorting $sortingDir, l.id
             LIMIT ?
             OFFSET ?
         """
+
+        val parameters = ArrayList<Any>()
+        parameters.add(filter.priceLower ?: 0)
+        parameters.add(filter.priceUpper ?: Int.MAX_VALUE)
+
+        if (filter.categories.isNotEmpty()) {
+            parameters.addAll(filter.categories)
+        }
+
+        parameters.add(filter.titleQuery ?: "")
+        parameters.add(page.pageSize)
+        parameters.add(page.offset)
+
         return jdbc.query(
             sql,
             rowMapper,
-            filter.priceLower ?: 0,
-            filter.priceUpper ?: Int.MAX_VALUE,
-            filter.category,
-            filter.category,
-            filter.titleQuery ?: "",
-            page.pageSize,
-            page.offset
+            *parameters.toTypedArray()
         )
     }
 
