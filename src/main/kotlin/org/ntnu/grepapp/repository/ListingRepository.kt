@@ -158,7 +158,8 @@ class ListingRepository(
             FROM bookmarks b 
                 JOIN listings l ON b.listing_id = l.id
                 JOIN users u ON l.author = u.phone
-            WHERE b.user_id = ? 
+            WHERE b.user_id = ?
+            ORDER BY bookmarked_at DESC
             LIMIT ? OFFSET ?
         """;
         return jdbc.query(sql, bookmarkedMapper, userId, pageable.pageSize, pageable.offset);
