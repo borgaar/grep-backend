@@ -4,6 +4,7 @@ import org.ntnu.grepapp.dto.auth.*
 import org.ntnu.grepapp.model.RegisterUser
 import org.ntnu.grepapp.service.AuthService
 import org.apache.logging.log4j.LogManager
+import org.ntnu.grepapp.model.User
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
