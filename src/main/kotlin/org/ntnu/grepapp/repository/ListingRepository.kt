@@ -24,6 +24,7 @@ class ListingRepository(
                 lastName = rs.getString("last_name"),
             ),
             price = rs.getInt("price"),
+            timestamp = rs.getTimestamp("created_at").toLocalDateTime(),
             lat = rs.getDouble("lat"),
             lon = rs.getDouble("lon"),
             category = Category(
@@ -35,7 +36,7 @@ class ListingRepository(
     fun find(id: UUID): Listing? {
         val sql = """
             SELECT
-                l.id, l.title, l.description, l.price, l.lat, l.lon,
+                l.id, l.title, l.description, l.price, l.created_at, l.lat, l.lon,
                 l.category, u.phone, u.first_name, u.last_name
             FROM listings l
                 JOIN users u ON l.author = u.phone
@@ -61,7 +62,7 @@ class ListingRepository(
 
         val base = """
             SELECT
-                l.id, l.title, l.description, l.price, l.lat, l.lon,
+                l.id, l.title, l.description, l.price, l.created_at, l.lat, l.lon,
                 l.category, u.phone, u.first_name, u.last_name
             FROM listings l
                 JOIN users u ON l.author = u.phone

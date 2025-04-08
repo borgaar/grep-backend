@@ -24,6 +24,7 @@ CREATE TABLE listings
     title       TEXT                 NOT NULL,
     description TEXT                 NOT NULL,
     price       INT                  NOT NULL,
+    created_at  TIMESTAMP            NOT NULL DEFAULT NOW(),
     lat         DOUBLE               NOT NULL,
     lon         DOUBLE               NOT NULL
 );
