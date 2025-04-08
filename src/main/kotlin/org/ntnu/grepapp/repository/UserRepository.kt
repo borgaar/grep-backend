@@ -14,12 +14,13 @@ class UserRepository(private var jdbc: JdbcTemplate) {
             phone = rs.getString("phone"),
             passwordHash = rs.getString("password_hash"),
             firstName = rs.getString("first_name"),
-            lastName = rs.getString("last_name")
+            lastName = rs.getString("last_name"),
+            role = rs.getString("role"),
         )
     }
 
     fun find(phone: String): User? {
-        val sql = "SELECT phone, password_hash, first_name, last_name FROM users WHERE phone = ?;";
+        val sql = "SELECT phone, password_hash, first_name, last_name, role FROM users WHERE phone = ?;";
         return try {
             jdbc.queryForObject(sql, rowMapper, phone)
         } catch (e: EmptyResultDataAccessException) {
