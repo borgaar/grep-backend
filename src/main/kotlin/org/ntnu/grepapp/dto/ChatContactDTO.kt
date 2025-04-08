@@ -1,4 +1,4 @@
-package org.ntnu.grepapp.dto.chat
+package org.ntnu.grepapp.dto
 
 import java.time.LocalDateTime
 

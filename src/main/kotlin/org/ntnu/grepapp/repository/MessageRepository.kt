@@ -48,8 +48,14 @@ class MessageRepository(
     }
 
     fun getList(pagination: Pageable, senderId: String, recipientId: String): List<ChatMessage> {
-        val sql =
-            "SELECT id, sender_id, recipient_id, content, timestamp FROM messages " + "WHERE ? IN (sender_id, recipient_id) AND ? IN (sender_id, recipient_id) " + "ORDER BY timestamp DESC LIMIT ? " + "OFFSET ?";
+        val sql = """
+            SELECT id, sender_id, recipient_id, content, timestamp
+            FROM messages
+            WHERE ? IN (sender_id, recipient_id)
+                AND ? IN (sender_id, recipient_id)
+            ORDER BY timestamp DESC
+            LIMIT ? OFFSET ?
+        """
         return jdbc.query(
             sql, rowMapper, senderId, recipientId, pagination.pageSize, pagination.offset
         )

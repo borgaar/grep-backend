@@ -1,6 +1,6 @@
 package org.ntnu.grepapp.mapping
 
-import org.ntnu.grepapp.dto.chat.ChatContactDTO
+import org.ntnu.grepapp.dto.ChatContactDTO
 import org.ntnu.grepapp.model.ChatContact
 
 fun toChatContactDTO(value: ChatContact): ChatContactDTO {

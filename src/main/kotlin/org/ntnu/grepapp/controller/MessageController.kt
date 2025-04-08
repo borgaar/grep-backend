@@ -1,6 +1,8 @@
 package org.ntnu.grepapp.controller
 
 import org.apache.logging.log4j.LogManager
+import org.ntnu.grepapp.dto.ChatContactDTO
+import org.ntnu.grepapp.dto.ChatMessageDTO
 import org.ntnu.grepapp.dto.chat.*
 import org.ntnu.grepapp.mapping.toChatContactDTO
 import org.ntnu.grepapp.service.MessageService
@@ -37,13 +39,13 @@ class MessageController(
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "5") pageSize: Int,
         @RequestParam otherUser: String
-    ): List<HistoryResponse> {
+    ): List<ChatMessageDTO> {
         logger.info("Get history");
         logger.info(page.toString(), pageSize.toString(), otherUser);
 
         return messageService.getHistory(
             PageRequest.of(page, pageSize), otherUser
-        ).map { HistoryResponse(
+        ).map { ChatMessageDTO(
             id = it.id,
             senderId = it.senderId,
             recipientId = it.recipientId,

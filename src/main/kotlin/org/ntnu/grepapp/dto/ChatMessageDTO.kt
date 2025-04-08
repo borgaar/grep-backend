@@ -1,8 +1,8 @@
-package org.ntnu.grepapp.dto.chat
+package org.ntnu.grepapp.dto
 
 import java.time.LocalDateTime
 
-data class HistoryResponse(
+data class ChatMessageDTO(
     val id: String,
     val senderId: String,
     val recipientId: String,
