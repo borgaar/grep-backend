@@ -5,7 +5,6 @@ import org.hibernate.sql.Update
 import org.ntnu.grepapp.dto.profile.GetResponse
 import org.ntnu.grepapp.dto.profile.UpdateRequest
 import org.ntnu.grepapp.dto.profile.UpdateResponse
-import org.ntnu.grepapp.mapping.toUserDTO
 import org.ntnu.grepapp.model.User
 import org.ntnu.grepapp.service.AuthService
 import org.ntnu.grepapp.service.UserService

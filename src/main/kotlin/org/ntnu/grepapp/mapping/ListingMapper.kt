@@ -23,6 +23,7 @@ fun toListingDTO(value: Listing): ListingDTO {
             phone = value.author.phone,
             firstName = value.author.firstName,
             lastName = value.author.lastName,
-        )
+        ),
+        isBookmarked = value.isBookmarked
     )
 }
