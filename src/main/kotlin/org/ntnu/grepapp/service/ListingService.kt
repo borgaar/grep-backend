@@ -32,4 +32,8 @@ class ListingService(
     fun update(id: UUID, new: UpdateListing): Boolean {
         return repository.update(id, new)
     }
+
+    fun getListingsForUserId(userId: String, page: Pageable): List<Listing> {
+        return repository.getListingsForUserId(userId, page);
+    }
 }

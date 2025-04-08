@@ -62,6 +62,19 @@ class ListingController(
         return ResponseEntity.ok(responseListing)
     }
 
+    @GetMapping("/personal")
+    fun getOwnListings(
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "5") pageSize: Int,
+    ): ResponseEntity<List<ListingDTO>> {
+        val listings = service.getListingsForUserId(authService.getCurrentUser(), PageRequest.of(page, pageSize));
+        return ResponseEntity.ok(
+            listings.map {
+                toListingDTO(it)
+            }
+        );
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun create(@RequestBody request: CreateRequest): ResponseEntity<Unit> {

@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
+import org.springframework.jdbc.core.queryForList
 import org.springframework.stereotype.Repository
 import java.util.*
 
@@ -143,5 +144,18 @@ class ListingRepository(
         return affected != 0
     }
 
+    fun getListingsForUserId(userId: String, page: Pageable): List<Listing> {
+        val sql = """
+            SELECT
+                l.id, l.title, l.description, l.price, l.created_at, l.lat, l.lon,
+                l.category, u.phone, u.first_name, u.last_name
+            FROM listings l
+                JOIN users u ON l.author = u.phone
+            WHERE u.phone = ?
+            LIMIT ? OFFSET ?;
+        """;
+
+        return jdbc.query(sql, rowMapper, userId, page.pageSize, page.offset)
+    }
 
 }
