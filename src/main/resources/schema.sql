@@ -34,7 +34,7 @@ CREATE TABLE messages
     sender_id    VARCHAR(20) NOT NULL REFERENCES users (phone) ON UPDATE CASCADE,
     recipient_id VARCHAR(20) NOT NULL REFERENCES users (phone) ON UPDATE CASCADE,
     content      TEXT        NOT NULL,
-    timestamp    TIMESTAMP   NOT NULL
+    timestamp    TIMESTAMP   NOT NULL DEFAULT NOW()
 );
 
 -- Password is 123
@@ -42,8 +42,9 @@ INSERT INTO users (phone, password_hash, first_name, last_name, role)
     VALUE ('99999999', '$2a$10$BbjEkDurDk31upVmMjM.A.JFIT57TQFQr6m./a9tk9ftjAu2rNMay', 'Brotherman', 'Testern', 'admin');
 
 -- Password is 456
-INSERT INTO users (phone, password_hash, first_name, last_name, role)
-    VALUE ('12345678', '$2a$10$yL3lpULoLJwKexGJNa1Rte1a7SryalnNN2oQwD0PjcGkWOqg5Q84e', 'Brur', 'Testingston', 'user');
+INSERT INTO users (phone, password_hash, first_name, last_name)
+    VALUES ('12345678', '$2a$10$yL3lpULoLJwKexGJNa1Rte1a7SryalnNN2oQwD0PjcGkWOqg5Q84e', 'Brur', 'Testingston'),
+           ('00000000', '000', 'Roger', 'Rogersen');
 
 INSERT INTO categories (name)
     VALUE ('Ting og tang');
@@ -57,3 +58,10 @@ INSERT INTO listings (id, author, category, title, description, price, lat, lon)
            42,
            71.00,
            71.00);
+
+INSERT INTO messages (id, sender_id, recipient_id, content, timestamp)
+    VALUES (UUID(), '99999999', '12345678', 'halla', '1999-02-02 14:00'),
+           (UUID(), '99999999', '12345678', 'halla igjen', '1999-02-02 15:00'),
+           (UUID(), '12345678', '99999999', '...', '1999-02-02 16:00'),
+           (UUID(), '99999999', '12345678', '.....', '1999-02-02 18:00'),
+           (UUID(), '00000000', '99999999', 'roger', '1999-02-02 17:00');
