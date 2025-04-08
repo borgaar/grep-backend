@@ -30,6 +30,10 @@ class ListingService(
         return repository.update(id, new)
     }
 
+    fun getListingsForUserId(userId: String, page: Pageable): List<Listing> {
+        return repository.getListingsForUserId(userId, page);
+    }
+
     fun getBookmarked(userId: String, pageable: Pageable): List<BookmarkedListing> {
         return repository.getBookmarked(userId, pageable)
     }

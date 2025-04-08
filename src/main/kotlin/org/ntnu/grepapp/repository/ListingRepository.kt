@@ -3,7 +3,6 @@ package org.ntnu.grepapp.repository
 import org.ntnu.grepapp.model.*
 import org.springframework.dao.DataAccessException
 import org.springframework.dao.EmptyResultDataAccessException
-import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
@@ -154,6 +153,21 @@ class ListingRepository(
         val affected =
             jdbc.update(sql, new.title, new.description, new.category, new.price, new.lat, new.lon, id.toString())
         return affected != 0
+    }
+
+    fun getListingsForUserId(userId: String, page: Pageable): List<Listing> {
+        val sql = """
+            SELECT
+                l.id, l.title, l.description, l.price, l.created_at, l.lat, l.lon,
+                l.category, u.phone, u.first_name, u.last_name, b.user_id IS NOT NULL AS is_bookmarked
+            FROM listings l
+                JOIN users u ON l.author = u.phone
+                LEFT JOIN bookmarks b ON b.listing_id = l.id AND b.user_id = ?
+            WHERE u.phone = ?
+            LIMIT ? OFFSET ?;
+        """;
+
+        return jdbc.query(sql, rowMapper, userId, userId, page.pageSize, page.offset)
     }
 
     fun getBookmarked(userId: String, pageable: Pageable): List<BookmarkedListing> {

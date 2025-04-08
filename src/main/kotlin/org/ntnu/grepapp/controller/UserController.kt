@@ -1,11 +1,9 @@
 package org.ntnu.grepapp.controller
 
 import org.apache.logging.log4j.LogManager
-import org.hibernate.sql.Update
 import org.ntnu.grepapp.dto.profile.GetResponse
 import org.ntnu.grepapp.dto.profile.UpdateRequest
 import org.ntnu.grepapp.dto.profile.UpdateResponse
-import org.ntnu.grepapp.model.User
 import org.ntnu.grepapp.service.AuthService
 import org.ntnu.grepapp.service.UserService
 import org.springframework.http.HttpStatus
