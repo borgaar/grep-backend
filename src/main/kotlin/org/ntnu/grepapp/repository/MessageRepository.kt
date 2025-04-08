@@ -21,7 +21,7 @@ class MessageRepository(
             senderId = rs.getString("sender_id"),
             recipientId = rs.getString("recipient_id"),
             content = rs.getString("content"),
-            timestamp = LocalDateTime.parse(rs.getString("timestamp"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+            timestamp = rs.getTimestamp("timestamp").toLocalDateTime()
         )
     }
 
@@ -43,7 +43,7 @@ class MessageRepository(
             VALUES (?, ?, ?, ?, ?)
             """
         jdbc.update(
-            sql, uuid, message.senderId, message.recipientId, message.content, message.timestamp
+            sql, message.id, message.senderId, message.recipientId, message.content, message.timestamp
         )
     }
 
