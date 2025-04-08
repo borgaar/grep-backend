@@ -6,6 +6,7 @@ import org.ntnu.grepapp.service.CategoryService
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.ntnu.grepapp.dto.CategoryDTO
+import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -23,7 +24,7 @@ class CategoryController(
         @RequestParam page: Int,
         @RequestParam pageSize: Int
     ): List<CategoryDTO> {
-        val list = categoryService.getAll(page, pageSize);
+        val list = categoryService.getAll(PageRequest.of(page, pageSize));
         return list.map { CategoryDTO(it.name) }
     }
 

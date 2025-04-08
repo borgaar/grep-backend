@@ -2,7 +2,7 @@ package org.ntnu.grepapp.repository
 
 import org.ntnu.grepapp.model.ChatMessage
 import org.apache.logging.log4j.LogManager
-import org.ntnu.grepapp.dto.PaginationDetail
+import org.springframework.data.domain.Pageable
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Repository
@@ -29,11 +29,11 @@ class MessageRepository (
         jdbc.update(sql, UUID.randomUUID().toString() ,message.senderId, message.recipientId, message.content, message.timestamp)
     }
 
-    fun getList(pagination: PaginationDetail, senderId: String, recipientId: String): List<ChatMessage> {
+    fun getList(pagination: Pageable, senderId: String, recipientId: String): List<ChatMessage> {
         val sql = "SELECT id, sender_id, recipient_id, content, timestamp FROM messages " +
                 "WHERE ? IN (sender_id, recipient_id) AND ? IN (sender_id, recipient_id) " +
                 "ORDER BY timestamp DESC LIMIT ? " +
                 "OFFSET ?";
-        return jdbc.query(sql, rowMapper, senderId,  recipientId, pagination.pageSize, pagination.page)
+        return jdbc.query(sql, rowMapper, senderId,  recipientId, pagination.pageSize, pagination.offset)
     }
 }

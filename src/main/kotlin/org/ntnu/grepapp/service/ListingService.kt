@@ -4,6 +4,7 @@ import org.ntnu.grepapp.model.Listing
 import org.ntnu.grepapp.model.NewListing
 import org.ntnu.grepapp.model.UpdateListing
 import org.ntnu.grepapp.repository.ListingRepository
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -15,8 +16,8 @@ class ListingService(
         return repository.find(id)
     }
 
-    fun getPaginated(page: Int, pageSize: Int): List<Listing> {
-        return repository.getPaginated(page, pageSize)
+    fun getPaginated(page: Pageable): List<Listing> {
+        return repository.getPaginated(page)
     }
 
     fun create(listing: NewListing): Boolean {
