@@ -23,8 +23,7 @@ class UserController (
 
     @GetMapping("/profile")
     fun getProfile(): ResponseEntity<User> {
-        val user = userService.getProfile(authService.getCurrentUser());
-        user?: return ResponseEntity(HttpStatus.NOT_FOUND);
+        val user = userService.getProfile(authService.getCurrentUser())?: return ResponseEntity(HttpStatus.NOT_FOUND);
         return ResponseEntity.ok(user);
     }
 }
