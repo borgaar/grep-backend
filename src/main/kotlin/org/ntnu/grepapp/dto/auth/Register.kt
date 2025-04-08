@@ -8,5 +8,8 @@ data class RegisterRequest(
 )
 
 data class RegisterResponse(
-    val token: String
+    val token: String,
+    val firstName: String,
+    val lastName: String,
+    val role: String
 )
