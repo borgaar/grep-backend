@@ -1,8 +1,10 @@
 package org.ntnu.grepapp.controller
 
 import org.apache.logging.log4j.LogManager
+import org.hibernate.sql.Update
+import org.ntnu.grepapp.dto.profile.GetResponse
 import org.ntnu.grepapp.dto.profile.UpdateRequest
-import org.ntnu.grepapp.dto.profile.UserDTO
+import org.ntnu.grepapp.dto.profile.UpdateResponse
 import org.ntnu.grepapp.mapping.toUserDTO
 import org.ntnu.grepapp.model.User
 import org.ntnu.grepapp.service.AuthService
@@ -21,23 +23,34 @@ class UserController (
     private val logger = LogManager.getLogger(this::class::java);
 
     @GetMapping("/profile")
-    fun getProfile(): ResponseEntity<UserDTO> {
+    fun getProfile(): ResponseEntity<GetResponse> {
         val user = userService.getProfile(authService.getCurrentUser()) ?: return ResponseEntity(
             HttpStatus.NOT_FOUND
         );
-        return ResponseEntity.ok(toUserDTO(user));
+        val body = GetResponse(
+            user.phone,
+            user.firstName,
+            user.lastName,
+            user.role
+        )
+        return ResponseEntity.ok(body);
     }
 
     @PatchMapping("/profile")
-    fun updateProfile(@RequestBody body: UpdateRequest): ResponseEntity<UserDTO> {
-        val updatedUser = userService.updateProfile(
+    fun updateProfile(@RequestBody body: UpdateRequest): ResponseEntity<UpdateResponse> {
+        val updated = userService.updateProfile(
             authService.getCurrentUser(), body.phone, body.firstName, body.lastName
         )
 
-        if (updatedUser == null) {
+        if (updated == null) {
             return ResponseEntity(HttpStatus.NOT_FOUND);
         }
-
-        return ResponseEntity.ok(toUserDTO(updatedUser));
+        val out = UpdateResponse(
+            updated.phone,
+            updated.firstName,
+            updated.lastName,
+            updated.role
+        )
+        return ResponseEntity.ok(out);
     }
 }
