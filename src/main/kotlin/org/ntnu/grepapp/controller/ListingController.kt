@@ -143,25 +143,7 @@ class ListingController(
     ): List<ListingDTO> {
         return service.getBookmarked(authService.getCurrentUser(), PageRequest.of(page, pageSize))
             .map {
-                ListingDTO(
-                    it.id.toString(),
-                    it.title,
-                    it.description,
-                    LocationDTO(
-                        it.lat,
-                        it.lon
-                    ),
-                    it.price,
-                    CategoryDTO(
-                        it.category.name
-                    ),
-                    ListingDTO.AuthorDTO(
-                        it.author.phone,
-                        it.author.phone,
-                        it.author.firstName,
-                        it.author.lastName,
-                    ),
-                )
+                toListingDTO(it)
             };
     }
 }

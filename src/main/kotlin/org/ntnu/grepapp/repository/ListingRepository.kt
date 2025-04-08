@@ -146,7 +146,7 @@ class ListingRepository(
     fun getBookmarked(userId: String, pageable: Pageable): List<Listing> {
         val sql = """
             SELECT 
-                l.id, l.title, l.description, l.price, l.lat, l.lon,
+                l.id, l.title, l.description, l.price, l.created_at, l.lat, l.lon,
                 l.category, u.phone, u.first_name, u.last_name
             FROM bookmarks b 
                 JOIN listings l ON b.listing_id = l.id
