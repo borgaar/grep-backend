@@ -49,16 +49,16 @@ class AuthController(
 
     @PutMapping("/password")
     fun updatePassword(
-        @RequestBody request: UpdatePassword
-    ): ResponseEntity<String> {
+        @RequestBody request: UpdatePasswordRequest
+    ): ResponseEntity<Unit> {
         try {
             authService.updatePassword(
                 authService.getCurrentUser(), request.oldPassword, request.newPassword
             )
         } catch (e: IllegalArgumentException) {
-            return ResponseEntity.badRequest().body(e.message)
+            return ResponseEntity(HttpStatus.BAD_REQUEST)
         }
 
-        return ResponseEntity.ok("Password was updated")
+        return ResponseEntity(HttpStatus.OK)
     }
 }
