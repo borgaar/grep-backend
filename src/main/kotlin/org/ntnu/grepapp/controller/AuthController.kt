@@ -44,7 +44,7 @@ class AuthController(
             token = authService.generateToken(user),
             firstName = user.firstName,
             lastName = user.lastName,
-            role = "user",
+            role = user.role,
         )
         return ResponseEntity.ok(body)
     }
