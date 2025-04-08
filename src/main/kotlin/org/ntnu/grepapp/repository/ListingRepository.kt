@@ -24,6 +24,7 @@ class ListingRepository(
                 lastName = rs.getString("last_name"),
             ),
             price = rs.getInt("price"),
+            timestamp = rs.getTimestamp("created_at").toLocalDateTime(),
             lat = rs.getDouble("lat"),
             lon = rs.getDouble("lon"),
             category = Category(
