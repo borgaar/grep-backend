@@ -5,5 +5,5 @@ data class User(
     val passwordHash: String,
     val firstName: String,
     val lastName: String,
-    val role: String = "user",
+    val role: String = "user"
 )
