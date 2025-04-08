@@ -14,6 +14,7 @@ fun toListingDTO(value: Listing): ListingDTO {
             value.lat, value.lon
         ),
         price = value.price,
+        createdAt = value.timestamp,
         category = CategoryDTO(
             name = value.category.name,
         ),

@@ -2,6 +2,7 @@ package org.ntnu.grepapp.repository
 
 import org.ntnu.grepapp.model.*
 import org.springframework.dao.EmptyResultDataAccessException
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
@@ -23,6 +24,7 @@ class ListingRepository(
                 lastName = rs.getString("last_name"),
             ),
             price = rs.getInt("price"),
+            timestamp = rs.getTimestamp("created_at").toLocalDateTime(),
             lat = rs.getDouble("lat"),
             lon = rs.getDouble("lon"),
             category = Category(
@@ -34,7 +36,7 @@ class ListingRepository(
     fun find(id: UUID): Listing? {
         val sql = """
             SELECT
-                l.id, l.title, l.description, l.price, l.lat, l.lon,
+                l.id, l.title, l.description, l.price, l.created_at, l.lat, l.lon,
                 l.category, u.phone, u.first_name, u.last_name
             FROM listings l
                 JOIN users u ON l.author = u.phone
@@ -47,18 +49,59 @@ class ListingRepository(
         }
     }
 
-    fun getPaginated(page: Pageable): List<Listing> {
-        val sql = """
+    fun filterPaginate(page: Pageable, filter: ListingFilter): List<Listing> {
+        val sorting = when (filter.sorting) {
+            "price" -> "l.price"
+            else -> "l.id"
+        }
+
+        val sortingDir = when (filter.sortingDirection) {
+            "desc" -> "DESC"
+            else -> "ASC"
+        }
+
+        val base = """
             SELECT
-                l.id, l.title, l.description, l.price, l.lat, l.lon,
+                l.id, l.title, l.description, l.price, l.created_at, l.lat, l.lon,
                 l.category, u.phone, u.first_name, u.last_name
             FROM listings l
                 JOIN users u ON l.author = u.phone
-            ORDER BY l.id DESC
+            WHERE ? <= l.price AND l.price <= ?
+        """
+
+        val where = if (filter.categories.isNotEmpty()) {
+            val params = filter.categories.joinToString(",") { "?" }
+            "AND l.category IN ($params)"
+        } else {
+            "AND TRUE"
+        }
+
+        val sql = """
+            $base
+            $where
+                AND Locate(?, l.title) != 0
+            ORDER BY $sorting $sortingDir, l.id
             LIMIT ?
             OFFSET ?
         """
-        return jdbc.query(sql, rowMapper, page.pageSize, page.offset)
+
+        val parameters = ArrayList<Any>()
+        parameters.add(filter.priceLower ?: 0)
+        parameters.add(filter.priceUpper ?: Int.MAX_VALUE)
+
+        if (filter.categories.isNotEmpty()) {
+            parameters.addAll(filter.categories)
+        }
+
+        parameters.add(filter.titleQuery ?: "")
+        parameters.add(page.pageSize)
+        parameters.add(page.offset)
+
+        return jdbc.query(
+            sql,
+            rowMapper,
+            *parameters.toTypedArray()
+        )
     }
 
     fun create(listing: NewListing): Boolean {

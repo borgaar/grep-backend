@@ -1,10 +1,9 @@
 package org.ntnu.grepapp.controller
 
+import org.apache.logging.log4j.LogManager
 import org.ntnu.grepapp.dto.auth.*
 import org.ntnu.grepapp.model.RegisterUser
 import org.ntnu.grepapp.service.AuthService
-import org.apache.logging.log4j.LogManager
-import org.ntnu.grepapp.model.User
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -44,8 +43,23 @@ class AuthController(
             token = authService.generateToken(user),
             firstName = user.firstName,
             lastName = user.lastName,
-            role = "user",
+            role = user.role,
         )
         return ResponseEntity.ok(body)
+    }
+
+    @PutMapping("/password")
+    fun updatePassword(
+        @RequestBody request: UpdatePasswordRequest
+    ): ResponseEntity<Unit> {
+        try {
+            authService.updatePassword(
+                authService.getCurrentUser(), request.oldPassword, request.newPassword
+            )
+        } catch (e: IllegalArgumentException) {
+            return ResponseEntity(HttpStatus.BAD_REQUEST)
+        }
+
+        return ResponseEntity(HttpStatus.OK)
     }
 }
