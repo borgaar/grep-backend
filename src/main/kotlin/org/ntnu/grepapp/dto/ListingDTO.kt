@@ -10,7 +10,9 @@ data class ListingDTO(
     val price: Int,
     val createdAt: LocalDateTime,
     val category: CategoryDTO,
-    val author: AuthorDTO
+    val author: AuthorDTO,
+    // user-specific
+    val isBookmarked: Boolean
 ) {
     data class AuthorDTO(
         val id: String,
