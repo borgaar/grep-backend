@@ -48,6 +48,16 @@ class ListingRepository(
     }
 
     fun filterPaginate(page: Pageable, filter: ListingFilter): List<Listing> {
+        val sorting = when (filter.sorting) {
+            "price" -> "l.price"
+            else -> "l.id"
+        }
+
+        val sortingDir = when (filter.sortingDirection) {
+            "desc" -> "DESC"
+            else -> "ASC"
+        }
+
         val sql = """
             SELECT
                 l.id, l.title, l.description, l.price, l.lat, l.lon,
@@ -57,7 +67,7 @@ class ListingRepository(
             WHERE ? <= l.price AND l.price <= ?
                 AND (l.category = ? OR ? IS NULL)
                 AND Locate(?, l.title) != 0 -- Locate gir 1 dersom argumentet er tom string
-            ORDER BY l.id DESC
+            ORDER BY $sorting $sortingDir, l.id
             LIMIT ?
             OFFSET ?
         """
