@@ -1,5 +1,5 @@
 package org.ntnu.grepapp.dto
 
-data class CategoryResponse(
+data class CategoryDTO(
     val name: String,
 )

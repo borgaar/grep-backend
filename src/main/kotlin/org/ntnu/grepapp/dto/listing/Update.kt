@@ -1,6 +1,8 @@
-package org.ntnu.grepapp.dto
+package org.ntnu.grepapp.dto.listing
 
-data class ListingUpdateRequest(
+import org.ntnu.grepapp.dto.LocationDTO
+
+data class UpdateRequest(
     val title: String,
     val description: String,
     val price: Int,

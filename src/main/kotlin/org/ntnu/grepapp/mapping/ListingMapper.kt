@@ -1,5 +1,6 @@
 package org.ntnu.grepapp.mapping
 
+import org.ntnu.grepapp.dto.CategoryDTO
 import org.ntnu.grepapp.dto.ListingDTO
 import org.ntnu.grepapp.dto.LocationDTO
 import org.ntnu.grepapp.model.Listing
@@ -13,8 +14,7 @@ fun toListingDTO(value: Listing): ListingDTO {
             value.lat, value.lon
         ),
         price = value.price,
-        category = ListingDTO.CategoryDTO(
-            id = value.category.name,
+        category = CategoryDTO(
             name = value.category.name,
         ),
         author = ListingDTO.AuthorDTO(
