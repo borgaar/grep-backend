@@ -57,39 +57,32 @@ class MessageRepository(
 
     fun getContacts(pagination: Pageable, userId: String): List<ChatContact> {
         val sql = """
-            SELECT 
-                contact.phone AS phone,
-                contact.first_name AS first_name,
-                contact.last_name AS last_name,
-                last_message.content AS last_message_content,
-                last_message.timestamp AS last_message_timestamp
-            FROM 
-                users AS contact
-            JOIN 
-                (
-                    SELECT 
-                        IF(sender_id = ?, recipient_id, sender_id) AS contact_id,
-                        MAX(timestamp) AS max_timestamp
-                    FROM 
-                        messages
-                    WHERE 
-                        sender_id = ? OR recipient_id = ?
-                    GROUP BY 
-                        contact_id
-                ) AS latest_contacts ON contact.phone = latest_contacts.contact_id
-            JOIN 
-                messages AS last_message ON (
-                    (last_message.sender_id = ? AND last_message.recipient_id = contact.phone) OR
-                    (last_message.sender_id = contact.phone AND last_message.recipient_id = ?)
-                ) AND last_message.timestamp = latest_contacts.max_timestamp
-            ORDER BY 
-                last_message.timestamp DESC
+            WITH contacts (one, other) AS (
+                SELECT m.sender_id, m.recipient_id
+                FROM messages m
+                UNION
+                SELECT m.recipient_id, m.sender_id
+                FROM messages m
+            ), msgs AS (
+                SELECT mc.other AS phone, m.*, Max(m.timestamp) OVER (
+                    PARTITION BY mc.other
+                    ORDER BY m.timestamp DESC
+                    ) AS maxval
+                FROM messages m
+                    JOIN contacts mc ON mc.other IN (m.sender_id, m.recipient_id)
+                WHERE mc.one = ?
+            )
+            SELECT m.phone, u.first_name, u.last_name, m.sender_id AS last_message_sender,
+                   m.content AS last_message_content,
+                   m.timestamp AS last_message_timestamp
+            FROM msgs m
+                JOIN users u ON u.phone = m.phone
+            WHERE m.maxval = m.timestamp -- technically breaks if there are messages with the same timestamp between the same users
             LIMIT ? OFFSET ?;
-          
         """;
 
         return jdbc.query(
-            sql, contactRowMapper, userId, userId, pagination.pageSize, pagination.offset
+            sql, contactRowMapper, userId, pagination.pageSize, pagination.offset
         )
     }
 }
