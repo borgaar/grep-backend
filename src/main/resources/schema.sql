@@ -8,7 +8,8 @@ CREATE TABLE users
     phone         VARCHAR(20) PRIMARY KEY NOT NULL,
     password_hash TEXT                    NOT NULL,
     first_name    TEXT                    NOT NULL,
-    last_name     TEXT                    NOT NULL
+    last_name     TEXT                    NOT NULL,
+    role          VARCHAR(20)             NOT NULL DEFAULT 'user'
 );
 
 CREATE TABLE categories (
@@ -37,8 +38,8 @@ CREATE TABLE messages
 );
 
 -- Password is 123
-INSERT INTO users (phone, password_hash, first_name, last_name)
-    VALUE ('99999999', '$2a$10$BbjEkDurDk31upVmMjM.A.JFIT57TQFQr6m./a9tk9ftjAu2rNMay', 'Brotherman', 'Testern');
+INSERT INTO users (phone, password_hash, first_name, last_name, role)
+    VALUE ('99999999', '$2a$10$BbjEkDurDk31upVmMjM.A.JFIT57TQFQr6m./a9tk9ftjAu2rNMay', 'Brotherman', 'Testern', 'admin');
 
 -- Password is 456
 INSERT INTO users (phone, password_hash, first_name, last_name)
