@@ -9,7 +9,7 @@ CREATE TABLE users
     password_hash TEXT                    NOT NULL,
     first_name    TEXT                    NOT NULL,
     last_name     TEXT                    NOT NULL,
-    role          VARCHAR(20)             NOT NULL
+    role          VARCHAR(20)             NOT NULL DEFAULT 'user'
 );
 
 CREATE TABLE categories (
@@ -39,11 +39,11 @@ CREATE TABLE messages
 
 -- Password is 123
 INSERT INTO users (phone, password_hash, first_name, last_name, role)
-    VALUE ('99999999', '$2a$10$BbjEkDurDk31upVmMjM.A.JFIT57TQFQr6m./a9tk9ftjAu2rNMay', 'Brotherman', 'Testern', 'ADMIN');
+    VALUE ('99999999', '$2a$10$BbjEkDurDk31upVmMjM.A.JFIT57TQFQr6m./a9tk9ftjAu2rNMay', 'Brotherman', 'Testern', 'admin');
 
 -- Password is 456
 INSERT INTO users (phone, password_hash, first_name, last_name, role)
-    VALUE ('12345678', '$2a$10$yL3lpULoLJwKexGJNa1Rte1a7SryalnNN2oQwD0PjcGkWOqg5Q84e', 'Brur', 'Testingston', 'USER');
+    VALUE ('12345678', '$2a$10$yL3lpULoLJwKexGJNa1Rte1a7SryalnNN2oQwD0PjcGkWOqg5Q84e', 'Brur', 'Testingston', 'user');
 
 INSERT INTO categories (name)
     VALUE ('Ting og tang');
