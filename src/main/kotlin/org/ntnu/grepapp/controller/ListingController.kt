@@ -6,6 +6,7 @@ import org.ntnu.grepapp.dto.listing.*
 import org.ntnu.grepapp.mapping.toListingDTO
 import org.ntnu.grepapp.model.NewListing
 import org.ntnu.grepapp.model.UpdateListing
+import org.ntnu.grepapp.repository.ListingRepository
 import org.ntnu.grepapp.service.AuthService
 import org.ntnu.grepapp.service.ListingService
 import org.springframework.data.domain.PageRequest
@@ -90,6 +91,12 @@ class ListingController(
             lat = listing.location.lat,
             lon = listing.location.lon
         )
+
+        if (listing.bookmarked) {
+            service.createBookmark(id, authService.getCurrentUser())
+        } else {
+            service.deleteBookmark(id, authService.getCurrentUser())
+        }
 
         val updated = service.update(id, new)
         val status = if (updated) {
