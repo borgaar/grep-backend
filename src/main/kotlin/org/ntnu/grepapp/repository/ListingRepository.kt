@@ -48,6 +48,7 @@ class ListingRepository(
     }
 
     fun filterPaginate(page: Pageable, filter: ListingFilter): List<Listing> {
+        println(filter.category)
         val sql = """
             SELECT
                 l.id, l.title, l.description, l.price, l.lat, l.lon,
@@ -55,6 +56,7 @@ class ListingRepository(
             FROM listings l
                 JOIN users u ON l.author = u.phone
             WHERE ? <= l.price AND l.price <= ?
+                AND (l.category = ? OR ? IS NULL)
             ORDER BY l.id DESC
             LIMIT ?
             OFFSET ?
@@ -64,6 +66,8 @@ class ListingRepository(
             rowMapper,
             filter.priceLower ?: 0,
             filter.priceUpper ?: Int.MAX_VALUE,
+            filter.category,
+            filter.category,
             page.pageSize,
             page.offset
         )
