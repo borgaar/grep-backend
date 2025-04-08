@@ -24,9 +24,13 @@ class MessageRepository (
 
     private val logger = LogManager.getLogger(this::class::java);
 
-    fun create(message: ChatMessage) {
-        val sql = "INSERT INTO messages(id, sender_id, recipient_id, content, timestamp) VALUES (?, ?, ?, ?, ?)";
-        jdbc.update(sql, UUID.randomUUID().toString() ,message.senderId, message.recipientId, message.content, message.timestamp)
+    fun create(message: ChatMessage): ChatMessage {
+        val uuid = UUID.randomUUID().toString();
+        val sql = """
+            INSERT INTO messages(id, sender_id, recipient_id, content, timestamp)
+            VALUES (?, ?, ?, ?, ?)
+            """
+        jdbc.update(sql, uuid, message.senderId, message.recipientId, message.content, message.timestamp)
     }
 
     fun getList(pagination: Pageable, senderId: String, recipientId: String): List<ChatMessage> {
