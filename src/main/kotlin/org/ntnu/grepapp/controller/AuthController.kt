@@ -28,7 +28,12 @@ class AuthController(
         )
         val maybeUser = authService.register(user)
         val newUser = maybeUser ?: return ResponseEntity(HttpStatus.CONFLICT)
-        val body = RegisterResponse(authService.generateToken(newUser))
+        val body = RegisterResponse(
+            authService.generateToken(newUser),
+            newUser.firstName,
+            newUser.lastName,
+            newUser.role
+        )
         return ResponseEntity.ok(body)
     }
 
