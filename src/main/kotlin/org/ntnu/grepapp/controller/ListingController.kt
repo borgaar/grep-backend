@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
+import kotlin.collections.ArrayList
 
 @RestController
 @RequestMapping("/api/listing")
@@ -28,7 +29,7 @@ class ListingController(
         @RequestParam size: Int,
         @RequestParam priceLower: Int?,
         @RequestParam priceUpper: Int?,
-        @RequestParam category: String?,
+        @RequestParam categories: List<String>?,
         @RequestParam query: String?,
         @RequestParam sort: String?,
         @RequestParam sortDirection: String?,
@@ -36,7 +37,7 @@ class ListingController(
         val filter = ListingFilter(
             priceLower = priceLower,
             priceUpper = priceUpper,
-            category = category,
+            categories = categories ?: ArrayList(),
             titleQuery = query,
             sorting = sort,
             sortingDirection = sortDirection,
