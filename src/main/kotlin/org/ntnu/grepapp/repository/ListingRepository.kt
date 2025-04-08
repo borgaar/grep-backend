@@ -48,7 +48,6 @@ class ListingRepository(
     }
 
     fun filterPaginate(page: Pageable, filter: ListingFilter): List<Listing> {
-        println(filter.category)
         val sql = """
             SELECT
                 l.id, l.title, l.description, l.price, l.lat, l.lon,
