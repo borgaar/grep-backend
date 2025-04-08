@@ -4,4 +4,5 @@ data class ListingFilter(
     val priceLower: Int?,
     val priceUpper: Int?,
     val category: String?,
+    val titleQuery: String?
 )

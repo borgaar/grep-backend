@@ -29,11 +29,13 @@ class ListingController(
         @RequestParam priceLower: Int?,
         @RequestParam priceUpper: Int?,
         @RequestParam category: String?,
+        @RequestParam query: String?,
     ): ResponseEntity<List<ListingDTO>> {
         val filter = ListingFilter(
             priceLower = priceLower,
             priceUpper = priceUpper,
-            category = category
+            category = category,
+            titleQuery = query,
         )
         val listings = service.getPaginatedAndFiltered(PageRequest.of(page, size), filter)
 
