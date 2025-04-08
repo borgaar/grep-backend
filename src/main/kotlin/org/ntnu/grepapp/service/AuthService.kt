@@ -1,5 +1,6 @@
 package org.ntnu.grepapp.service
 
+import jakarta.persistence.EntityNotFoundException
 import org.ntnu.grepapp.model.RegisterUser
 import org.ntnu.grepapp.model.User
 import org.ntnu.grepapp.repository.UserRepository
@@ -35,18 +36,33 @@ class AuthService(
     }
 
     fun register(user: RegisterUser): User? {
-        val hashed = passwordEncoder.encode(user.passwordRaw)
+        val hashed = hashPassword(user.passwordRaw)
         println(hashed)
         if (userRepository.find(user.phone) != null) {
             return null
         }
         val newUser = User(
             phone = user.phone,
-            passwordHash = passwordEncoder.encode(user.passwordRaw),
+            passwordHash = hashPassword(user.passwordRaw),
             firstName = user.firstName,
             lastName = user.lastName,
         )
         userRepository.save(newUser);
         return newUser;
+    }
+
+    fun updatePassword(phone: String, oldPassword: String, newPassword: String) {
+        val user = userRepository.find(phone) ?: throw EntityNotFoundException()
+
+        if (passwordEncoder.matches(oldPassword, user.passwordHash)) {
+            user.passwordHash = hashPassword(newPassword)
+            userRepository.overwrite(phone, user)
+        } else {
+            throw IllegalArgumentException("Old password is incorrect")
+        }
+    }
+
+    private fun hashPassword(password: String): String {
+        return passwordEncoder.encode(password)
     }
 }

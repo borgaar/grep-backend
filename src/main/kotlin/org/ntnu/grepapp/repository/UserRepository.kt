@@ -32,4 +32,9 @@ class UserRepository(private var jdbc: JdbcTemplate) {
         val sql = "INSERT INTO users (phone, password_hash, first_name, last_name) VALUES (?, ?, ?, ?);";
         jdbc.update(sql, user.phone, user.passwordHash, user.firstName, user.lastName);
     }
+
+    fun overwrite(phone: String, user: User) {
+        val sql = "UPDATE users SET phone = ?, password_hash = ?, first_name = ?, last_name = ? WHERE phone = ?;";
+        jdbc.update(sql, user.phone, user.passwordHash, user.firstName, user.lastName, phone);
+    }
 }
