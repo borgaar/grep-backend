@@ -124,6 +124,7 @@ class ListingRepository(
         val countBase = """
         SELECT COUNT(*) 
             FROM listings l
+                LEFT JOIN bookmarks b ON b.listing_id = l.id AND b.user_id = ?
             WHERE ? <= l.price AND l.price <= ?
         """
 
