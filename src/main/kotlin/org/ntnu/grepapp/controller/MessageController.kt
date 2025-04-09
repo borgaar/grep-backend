@@ -5,6 +5,8 @@ import org.ntnu.grepapp.dto.ChatContactDTO
 import org.ntnu.grepapp.dto.ChatMessageDTO
 import org.ntnu.grepapp.dto.chat.*
 import org.ntnu.grepapp.mapping.toChatContactDTO
+import org.ntnu.grepapp.model.CreateChatMessage
+import org.ntnu.grepapp.service.AuthService
 import org.ntnu.grepapp.service.MessageService
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
@@ -15,14 +17,22 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/message")
 @CrossOrigin(origins = ["http://localhost:5173", "*"])
 class MessageController(
-    private val messageService: MessageService
+    private val messageService: MessageService,
+    private val authService: AuthService
 ) {
     private val logger = LogManager.getLogger(this::class.java)
 
     @PostMapping("/send")
     fun sendMessage(@RequestBody message: ChatSendRequest): ResponseEntity<ChatSendResponse> {
         logger.info(message.recipientId, message.toString());
-        val createdMessage = messageService.create(message)?: return ResponseEntity(HttpStatus.BAD_REQUEST);
+        val newMessage = CreateChatMessage(
+            senderId = authService.getCurrentUser(),
+            recipientId = message.recipientId,
+            content = message.content,
+        )
+
+        val createdMessage = messageService.create(newMessage)?: return ResponseEntity(HttpStatus.BAD_REQUEST);
+
         return ResponseEntity.ok(
             ChatSendResponse(
                 id = createdMessage.id,
@@ -51,6 +61,7 @@ class MessageController(
             recipientId = it.recipientId,
             timestamp = it.timestamp,
             content = it.content,
+            type = it.type
         ) }
     }
 

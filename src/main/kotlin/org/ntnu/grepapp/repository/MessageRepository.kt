@@ -3,13 +3,11 @@ package org.ntnu.grepapp.repository
 import org.apache.logging.log4j.LogManager
 import org.ntnu.grepapp.model.ChatContact
 import org.ntnu.grepapp.model.ChatMessage
+import org.ntnu.grepapp.model.ChatMessageType
 import org.springframework.data.domain.Pageable
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Repository
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.*
 
 @Repository
 class MessageRepository(
@@ -21,7 +19,8 @@ class MessageRepository(
             senderId = rs.getString("sender_id"),
             recipientId = rs.getString("recipient_id"),
             content = rs.getString("content"),
-            timestamp = rs.getTimestamp("timestamp").toLocalDateTime()
+            timestamp = rs.getTimestamp("timestamp").toLocalDateTime(),
+            type = ChatMessageType.fromValue(rs.getString("type"))
         )
     }
 
@@ -39,17 +38,17 @@ class MessageRepository(
 
     fun create(message: ChatMessage) {
         val sql = """
-            INSERT INTO messages(id, sender_id, recipient_id, content, timestamp)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO messages(id, sender_id, recipient_id, content, timestamp, type)
+            VALUES (?, ?, ?, ?, ?, ?)
             """
         jdbc.update(
-            sql, message.id, message.senderId, message.recipientId, message.content, message.timestamp
+            sql, message.id, message.senderId, message.recipientId, message.content, message.timestamp, message.type.value
         )
     }
 
     fun getList(pagination: Pageable, senderId: String, recipientId: String): List<ChatMessage> {
         val sql = """
-            SELECT id, sender_id, recipient_id, content, timestamp
+            SELECT id, sender_id, recipient_id, content, timestamp, type
             FROM messages
             WHERE ? IN (sender_id, recipient_id)
                 AND ? IN (sender_id, recipient_id)

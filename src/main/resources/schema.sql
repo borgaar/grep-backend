@@ -15,7 +15,8 @@ CREATE TABLE users
     role          VARCHAR(20)             NOT NULL DEFAULT 'user'
 );
 
-CREATE TABLE categories (
+CREATE TABLE categories
+(
     name VARCHAR(255) NOT NULL PRIMARY KEY
 );
 
@@ -29,7 +30,9 @@ CREATE TABLE listings
     price       INT                  NOT NULL,
     created_at  TIMESTAMP            NOT NULL DEFAULT NOW(),
     lat         DOUBLE               NOT NULL,
-    lon         DOUBLE               NOT NULL
+    lon         DOUBLE               NOT NULL,
+    reserved_by VARCHAR(20)          NULL REFERENCES users (phone) ON UPDATE CASCADE ON DELETE SET NULL,
+    sold_to     VARCHAR(20)          NULL REFERENCES users (phone) ON UPDATE CASCADE ON DELETE SET NULL
 );
 
 CREATE TABLE messages
@@ -38,7 +41,8 @@ CREATE TABLE messages
     sender_id    VARCHAR(20) NOT NULL REFERENCES users (phone) ON UPDATE CASCADE,
     recipient_id VARCHAR(20) NOT NULL REFERENCES users (phone) ON UPDATE CASCADE,
     content      TEXT        NOT NULL,
-    timestamp    TIMESTAMP   NOT NULL DEFAULT NOW()
+    timestamp    TIMESTAMP   NOT NULL DEFAULT NOW(),
+    type  ENUM('text', 'reserved', 'marked-sold') NOT NULL DEFAULT('text')
 );
 
 CREATE TABLE images (
