@@ -10,4 +10,17 @@ data class ChatMessage(
     val recipientId: String,
     val content: String,
     val timestamp: LocalDateTime = LocalDateTime.now(ZoneOffset.UTC),
+    val type: ChatMessageType = ChatMessageType.TEXT,
 )
+
+enum class ChatMessageType(val value: String) {
+    TEXT("text"),
+    RESERVED("reserved"),
+    MARKED_SOLD("marked-sold");
+
+    companion object {
+        fun fromValue(value: String): ChatMessageType {
+            return entries.firstOrNull { it.value == value } ?: TEXT
+        }
+    }
+}

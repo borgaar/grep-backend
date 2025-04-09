@@ -70,7 +70,7 @@ class ListingController(
         val listings = service.getListingsForUserId(authService.getCurrentUser(), PageRequest.of(page, pageSize));
         return ResponseEntity.ok(
             listings.map {
-                toListingDTO(it)
+                toListingDTO(it, true)
             }
         );
     }
@@ -78,7 +78,6 @@ class ListingController(
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun create(@RequestBody request: ListingCreateRequest): ResponseEntity<Unit> {
-
         val new = NewListing(
             title = request.title,
             description = request.description,
@@ -141,7 +140,18 @@ class ListingController(
 
     @PostMapping("/reserve/{id}")
     fun reserve(@PathVariable id: UUID): ResponseEntity<Unit> {
-        // TODO
+        // Make sure the user reserving is not the user that created the listing
+        val listing = service.find(id, authService.getCurrentUser()) ?: return ResponseEntity(
+            HttpStatus.NOT_FOUND
+        )
+
+        if (listing.author.phone == authService.getCurrentUser()) {
+            return ResponseEntity(HttpStatus.FORBIDDEN)
+        }
+
+        // Set the listing to reserved
+        service.setReserved(id, authService.getCurrentUser())
+
         val status = HttpStatus.OK
         return ResponseEntity(status)
     }

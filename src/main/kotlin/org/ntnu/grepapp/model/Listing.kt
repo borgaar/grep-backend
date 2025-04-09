@@ -15,4 +15,5 @@ data class Listing(
     val category: Category,
     // user-specific
     val isBookmarked: Boolean,
+    val reservedBy: User?,
 )

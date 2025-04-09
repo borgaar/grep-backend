@@ -11,8 +11,13 @@ data class ListingDTO(
     val createdAt: LocalDateTime,
     val category: CategoryDTO,
     val author: AuthorDTO,
+    val isReserved: Boolean,
+
     // user-specific
-    val isBookmarked: Boolean
+    val isBookmarked: Boolean,
+
+    // Only included when fetched by the author
+    val reservedBy: AuthorDTO?,
 ) {
     data class AuthorDTO(
         val id: String,
