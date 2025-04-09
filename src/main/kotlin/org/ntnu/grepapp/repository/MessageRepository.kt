@@ -42,7 +42,7 @@ class MessageRepository(
             VALUES (?, ?, ?, ?, ?, ?)
             """
         jdbc.update(
-            sql, message.id, message.senderId, message.recipientId, message.content, message.timestamp, message.type
+            sql, message.id, message.senderId, message.recipientId, message.content, message.timestamp, message.type.value
         )
     }
 

@@ -4,11 +4,10 @@ import org.ntnu.grepapp.dto.BookmarkedListingDTO
 import org.ntnu.grepapp.dto.ListingDTO
 import org.ntnu.grepapp.dto.listing.*
 import org.ntnu.grepapp.mapping.toListingDTO
-import org.ntnu.grepapp.model.ListingFilter
-import org.ntnu.grepapp.model.NewListing
-import org.ntnu.grepapp.model.UpdateListing
+import org.ntnu.grepapp.model.*
 import org.ntnu.grepapp.service.AuthService
 import org.ntnu.grepapp.service.ListingService
+import org.ntnu.grepapp.service.MessageService
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -22,6 +21,7 @@ import kotlin.collections.ArrayList
 class ListingController(
     val service: ListingService,
     val authService: AuthService,
+    private val messageService: MessageService,
 ) {
     @GetMapping
     fun getPaginated(
@@ -140,17 +140,30 @@ class ListingController(
 
     @PostMapping("/reserve/{id}")
     fun reserve(@PathVariable id: UUID): ResponseEntity<Unit> {
-        // Make sure the user reserving is not the user that created the listing
         val listing = service.find(id, authService.getCurrentUser()) ?: return ResponseEntity(
             HttpStatus.NOT_FOUND
         )
 
+        // Make sure it is not already reserved
+        if (listing.reservedBy != null) {
+            return ResponseEntity(HttpStatus.CONFLICT)
+        }
+
+        // Make sure the user reserving is not the user that created the listing
         if (listing.author.phone == authService.getCurrentUser()) {
             return ResponseEntity(HttpStatus.FORBIDDEN)
         }
 
         // Set the listing to reserved
         service.setReserved(id, authService.getCurrentUser())
+
+        // Send message to the author
+        messageService.create(CreateChatMessage(
+            senderId = authService.getCurrentUser(),
+            recipientId = listing.author.phone,
+            content = "", // message generated on frontend based on type
+            type = ChatMessageType.RESERVED
+        ))
 
         val status = HttpStatus.OK
         return ResponseEntity(status)
