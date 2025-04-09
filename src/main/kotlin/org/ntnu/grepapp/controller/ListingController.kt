@@ -7,6 +7,7 @@ import org.ntnu.grepapp.mapping.toListingDTO
 import org.ntnu.grepapp.model.ListingFilter
 import org.ntnu.grepapp.model.NewListing
 import org.ntnu.grepapp.model.UpdateListing
+import org.ntnu.grepapp.security.JwtUtil
 import org.ntnu.grepapp.service.AuthService
 import org.ntnu.grepapp.service.ListingService
 import org.springframework.data.domain.PageRequest
@@ -22,6 +23,7 @@ import kotlin.collections.ArrayList
 class ListingController(
     val service: ListingService,
     val authService: AuthService,
+    val jwtUtil: JwtUtil,
 ) {
     @GetMapping
     fun getPaginated(
@@ -102,7 +104,9 @@ class ListingController(
 
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: UUID): ResponseEntity<Unit> {
-        val deleted = service.delete(id)
+        val userId = authService.getCurrentUser()
+        val userRole = authService.getRole()
+        val deleted = service.delete(id, userId, userRole)
         val status = if (deleted) {
             HttpStatus.OK
         } else {
