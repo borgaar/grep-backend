@@ -23,7 +23,7 @@ class AuthService(
     }
 
     fun generateToken(user: User): String {
-        return jwtUtil.generateToken(user.phone)
+        return jwtUtil.generateToken(user.phone, user.role)
     }
 
     fun login(phone: String, passwordRaw: String): User? {

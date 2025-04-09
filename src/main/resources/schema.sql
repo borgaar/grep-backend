@@ -81,6 +81,16 @@ INSERT INTO listings (id, author, category, title, description, price, lat, lon)
            71.00,
            71.00);
 
+INSERT INTO listings (id, author, category, title, description, price, lat, lon)
+    VALUE ('084846ae-3ddc-4ae8-8d8c-1ed7c4ab1925',
+           '12345678',
+           'Ting og tang',
+           'Ost',
+           'Mmmm, veldig ost.',
+           500,
+           71.00,
+           71.00);
+
 INSERT INTO bookmarks (user_id, listing_id)
     VALUE (99999999, '084846ae-3ddc-4ae8-8d8c-1ed7c4ab1922');
 

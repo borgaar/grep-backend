@@ -1,7 +1,7 @@
 package org.ntnu.grepapp.service
 
 import org.apache.logging.log4j.LogManager
-import org.ntnu.grepapp.dto.chat.SendRequest
+import org.ntnu.grepapp.dto.chat.ChatSendRequest
 import org.ntnu.grepapp.model.ChatContact
 import org.ntnu.grepapp.model.ChatMessage
 import org.ntnu.grepapp.repository.MessageRepository
@@ -15,7 +15,7 @@ class MessageService(
 ) {
     private val logger = LogManager.getLogger(this::class::java);
 
-    fun create(message: SendRequest): ChatMessage? {
+    fun create(message: ChatSendRequest): ChatMessage? {
         val chatMessage = ChatMessage(
             senderId = authService.getCurrentUser(),
             recipientId = message.recipientId,

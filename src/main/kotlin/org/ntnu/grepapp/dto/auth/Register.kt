@@ -1,13 +1,13 @@
 package org.ntnu.grepapp.dto.auth
 
-data class RegisterRequest(
+data class AuthRegisterRequest(
     val phone: String,
     val password: String,
     val firstName: String,
     val lastName: String
 )
 
-data class RegisterResponse(
+data class AuthRegisterResponse(
     val token: String,
     val firstName: String,
     val lastName: String,

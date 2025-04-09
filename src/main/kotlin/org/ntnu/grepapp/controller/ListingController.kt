@@ -1,15 +1,12 @@
 package org.ntnu.grepapp.controller
 
 import org.ntnu.grepapp.dto.BookmarkedListingDTO
-import org.ntnu.grepapp.dto.CategoryDTO
 import org.ntnu.grepapp.dto.ListingDTO
-import org.ntnu.grepapp.dto.LocationDTO
 import org.ntnu.grepapp.dto.listing.*
 import org.ntnu.grepapp.mapping.toListingDTO
 import org.ntnu.grepapp.model.ListingFilter
 import org.ntnu.grepapp.model.NewListing
 import org.ntnu.grepapp.model.UpdateListing
-import org.ntnu.grepapp.repository.ListingRepository
 import org.ntnu.grepapp.service.AuthService
 import org.ntnu.grepapp.service.ListingService
 import org.springframework.data.domain.PageRequest
@@ -41,7 +38,7 @@ class ListingController(
             priceLower = priceLower,
             priceUpper = priceUpper,
             categories = categories ?: ArrayList(),
-            titleQuery = query,
+            searchQuery = query,
             sorting = sort,
             sortingDirection = sortDirection,
         )
@@ -80,7 +77,7 @@ class ListingController(
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun create(@RequestBody request: CreateRequest): ResponseEntity<Unit> {
+    fun create(@RequestBody request: ListingCreateRequest): ResponseEntity<Unit> {
 
         val new = NewListing(
             title = request.title,
@@ -116,7 +113,7 @@ class ListingController(
     }
 
     @PatchMapping("/{id}")
-    fun update(@PathVariable id: UUID, @RequestBody listing: UpdateRequest): ResponseEntity<Unit> {
+    fun update(@PathVariable id: UUID, @RequestBody listing: ListingUpdateRequest): ResponseEntity<Unit> {
         val new = UpdateListing(
             title = listing.title,
             description = listing.description,

@@ -2,12 +2,12 @@ package org.ntnu.grepapp.dto.chat
 
 import java.time.LocalDateTime
 
-data class SendRequest(
+data class ChatSendRequest(
     val recipientId: String,
     val content: String,
 )
 
-data class SendResponse(
+data class ChatSendResponse(
     val id: String,
     val senderId: String,
     val recipientId: String,

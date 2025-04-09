@@ -3,7 +3,6 @@ package org.ntnu.grepapp.controller
 import org.ntnu.grepapp.dto.category.*
 import org.ntnu.grepapp.model.Category
 import org.ntnu.grepapp.service.CategoryService
-import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.ntnu.grepapp.dto.CategoryDTO
 import org.springframework.data.domain.PageRequest
@@ -29,7 +28,7 @@ class CategoryController(
     }
 
     @PostMapping("/create")
-    fun create(@RequestBody request: CreateRequest): ResponseEntity<Unit> {
+    fun create(@RequestBody request: CategoryCreateRequest): ResponseEntity<Unit> {
         val category = Category(request.name);
         val status = if (categoryService.create(category)) {
             HttpStatus.OK
@@ -40,7 +39,7 @@ class CategoryController(
     }
 
     @PatchMapping("/update")
-    fun update(@RequestBody request: UpdateRequest): ResponseEntity<Unit> {
+    fun update(@RequestBody request: CategoryUpdateRequest): ResponseEntity<Unit> {
         val new = Category(request.new.name);
         val status = if (categoryService.update(request.oldName, new)) {
             HttpStatus.OK
