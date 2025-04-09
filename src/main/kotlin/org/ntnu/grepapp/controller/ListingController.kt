@@ -182,4 +182,27 @@ class ListingController(
                 )
             }
     }
+
+    @PostMapping("/{id}/sell/{phone}")
+    fun markAsSold(@PathVariable id: UUID, @PathVariable phone: String): ResponseEntity<Unit> {
+        // Make sure the user is the author
+        val listing = service.find(id, authService.getCurrentUser()) ?: return ResponseEntity(
+            HttpStatus.NOT_FOUND
+        )
+
+        if(listing.author.phone != authService.getCurrentUser()) {
+            return ResponseEntity(HttpStatus.FORBIDDEN)
+        }
+
+        service.markAsSold(id, phone)
+
+        // Send message to the user that bought the listing
+        messageService.create(CreateChatMessage(
+            senderId = authService.getCurrentUser(),
+            recipientId = phone,
+            content = "", // message generated on frontend based on type
+            type = ChatMessageType.MARKED_SOLD
+        ))
+        return ResponseEntity(HttpStatus.OK)
+    }
 }

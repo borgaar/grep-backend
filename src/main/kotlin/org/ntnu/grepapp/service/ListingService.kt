@@ -49,4 +49,8 @@ class ListingService(
     fun setReserved(listingId: UUID, reservedUserID: String?) :Boolean {
         return repository.setReserved(listingId, reservedUserID);
     }
+
+    fun markAsSold(listingId: UUID, soldUserID: String?) :Boolean {
+        return repository.markAsSold(listingId, soldUserID);
+    }
 }

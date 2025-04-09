@@ -16,4 +16,5 @@ data class Listing(
     // user-specific
     val isBookmarked: Boolean,
     val reservedBy: User?,
+    val soldTo: User?
 )

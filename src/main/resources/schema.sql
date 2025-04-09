@@ -29,7 +29,8 @@ CREATE TABLE listings
     created_at  TIMESTAMP            NOT NULL DEFAULT NOW(),
     lat         DOUBLE               NOT NULL,
     lon         DOUBLE               NOT NULL,
-    reserved_by VARCHAR(20)          NULL REFERENCES users (phone) ON UPDATE CASCADE ON DELETE SET NULL
+    reserved_by VARCHAR(20)          NULL REFERENCES users (phone) ON UPDATE CASCADE ON DELETE SET NULL,
+    sold_to     VARCHAR(20)          NULL REFERENCES users (phone) ON UPDATE CASCADE ON DELETE SET NULL
 );
 
 CREATE TABLE messages

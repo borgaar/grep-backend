@@ -38,6 +38,13 @@ class ListingRepository(
                 lastName = rs.getString("ru_last_name"),
                 role = rs.getString("ru_role"),
             ) else null,
+            soldTo = if (rs.getNString("su_phone") != null) User(
+                phone = rs.getString("su_phone"),
+                passwordHash = rs.getString("su_password_hash"),
+                firstName = rs.getString("su_first_name"),
+                lastName = rs.getString("su_last_name"),
+                role = rs.getString("su_role"),
+            ) else null
         )
     }
 
@@ -53,10 +60,12 @@ class ListingRepository(
             SELECT
                 l.id, l.title, l.description, l.price, l.created_at, l.lat, l.lon,
                 l.category, u.phone, u.first_name, u.last_name, b.user_id IS NOT NULL AS is_bookmarked,
-                ru.first_name AS ru_first_name, ru.phone AS ru_phone, ru.last_name AS ru_last_name, ru.password_hash AS ru_password_hash, ru.role AS ru_role
+                ru.first_name AS ru_first_name, ru.phone AS ru_phone, ru.last_name AS ru_last_name, ru.password_hash AS ru_password_hash, ru.role AS ru_role,
+                su.first_name AS su_first_name, su.phone AS su_phone, su.last_name AS su_last_name, su.password_hash AS su_password_hash, su.role AS su_role
             FROM listings l
                 JOIN users u ON l.author = u.phone
                 LEFT JOIN users ru ON l.reserved_by = ru.phone
+                LEFT JOIN users su ON l.sold_to = su.phone
                 LEFT JOIN bookmarks b ON b.listing_id = l.id AND b.user_id = ?
             WHERE id = ?;
         """
@@ -82,10 +91,12 @@ class ListingRepository(
             SELECT
                 l.id, l.title, l.description, l.price, l.created_at, l.lat, l.lon,
                 l.category, u.phone, u.first_name, u.last_name, b.user_id IS NOT NULL AS is_bookmarked,
-                ru.first_name AS ru_first_name, ru.phone AS ru_phone, ru.last_name AS ru_last_name, ru.password_hash AS ru_password_hash, ru.role AS ru_role
+                ru.first_name AS ru_first_name, ru.phone AS ru_phone, ru.last_name AS ru_last_name, ru.password_hash AS ru_password_hash, ru.role AS ru_role,
+                su.first_name AS su_first_name, su.phone AS su_phone, su.last_name AS su_last_name, su.password_hash AS su_password_hash, su.role AS su_role
             FROM listings l
                 JOIN users u ON l.author = u.phone
                 LEFT JOIN users ru ON l.reserved_by = ru.phone
+                LEFT JOIN users su ON l.reserved_by = su.phone
                 LEFT JOIN bookmarks b ON b.listing_id = l.id AND b.user_id = ?
             WHERE ? <= l.price AND l.price <= ?
         """
@@ -240,5 +251,12 @@ class ListingRepository(
             UPDATE listings SET reserved_by = ? WHERE id = ?;
         """;
         return jdbc.update(sql, reservedUserID, listingId.toString()) != 0;
+    }
+
+    fun markAsSold(listingId: UUID, soldUserID: String?): Boolean {
+        val sql = """
+            UPDATE listings SET sold_to = ? WHERE id = ?;
+        """;
+        return jdbc.update(sql, soldUserID, listingId.toString()) != 0;
     }
 }
