@@ -41,7 +41,7 @@ class ListingController(
             priceLower = priceLower,
             priceUpper = priceUpper,
             categories = categories ?: ArrayList(),
-            titleQuery = query,
+            searchQuery = query,
             sorting = sort,
             sortingDirection = sortDirection,
         )
