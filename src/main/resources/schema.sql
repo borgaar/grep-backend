@@ -1,4 +1,6 @@
 DROP TABLE IF EXISTS bookmarks;
+DROP TABLE IF EXISTS listing_images;
+DROP TABLE IF EXISTS images;
 DROP TABLE IF EXISTS listings;
 DROP TABLE IF EXISTS categories;
 DROP TABLE IF EXISTS messages;
@@ -42,6 +44,16 @@ CREATE TABLE messages
     timestamp    TIMESTAMP   NOT NULL DEFAULT NOW(),
     type  ENUM('text', 'reserved', 'marked-sold') NOT NULL DEFAULT('text')
 );
+
+CREATE TABLE images (
+    id CHAR(36) NOT NULL PRIMARY KEY,
+    buffer TEXT NOT NULL -- base64
+);
+
+CREATE TABLE listing_images (
+    listing_id CHAR(36) NOT NULL PRIMARY KEY REFERENCES listings (id),
+    image_id CHAR(36) NOT NULL REFERENCES images (id)
+); -- no explicit ordering for now, maybe later
 
 CREATE TABLE bookmarks
 (

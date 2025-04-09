@@ -14,9 +14,10 @@ class JwtUtil {
     )
 
 
-    fun generateToken(phone: String): String {
+    fun generateToken(phone: String, role: String): String {
         return Jwts.builder()
             .setSubject(phone)
+            .claim("role", role)
             .setIssuedAt(Date())
             .setExpiration(Date(System.currentTimeMillis() + 1000 * 60 * 60))
             .signWith(secretKey)
