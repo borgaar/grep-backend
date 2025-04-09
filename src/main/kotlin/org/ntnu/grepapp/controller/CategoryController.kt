@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*
 class CategoryController(
     private val categoryService: CategoryService,
     private val authService: AuthService,
-    private val jwtUtil: JwtUtil,
 ) {
     private val logger = LogManager.getLogger(this::class::java);
 

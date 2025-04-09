@@ -25,7 +25,6 @@ import kotlin.collections.ArrayList
 class ListingController(
     val service: ListingService,
     val authService: AuthService,
-    val jwtUtil: JwtUtil,
     private val messageService: MessageService,
 ) {
     @GetMapping
@@ -107,7 +106,7 @@ class ListingController(
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: UUID): ResponseEntity<Unit> {
         val userId = authService.getCurrentUser()
-        val userRole = jwtUtil.extractRoleFromToken(authService.getJWT())
+        val userRole = authService.getRole()
         val deleted = service.delete(id, userId, userRole)
         val status = if (deleted) {
             HttpStatus.OK
