@@ -27,6 +27,7 @@ class ListingRepository(
             ),
             price = rs.getInt("price"),
             timestamp = rs.getTimestamp("created_at").toLocalDateTime(),
+            updatedAt = rs.getTimestamp("updated_at").toLocalDateTime(),
             lat = rs.getDouble("lat"),
             lon = rs.getDouble("lon"),
             category = Category(
@@ -74,7 +75,7 @@ class ListingRepository(
     fun find(id: UUID, userId: String): Listing? {
         val sql = """
             SELECT
-                l.id, l.title, l.description, l.price, l.created_at, l.lat, l.lon,
+                l.id, l.title, l.description, l.price, l.created_at, l.lat, l.lon, l.updated_at,
                 l.category, u.phone, u.first_name, u.last_name, b.user_id IS NOT NULL AS is_bookmarked,
                 ru.first_name AS ru_first_name, ru.phone AS ru_phone, ru.last_name AS ru_last_name, ru.password_hash AS ru_password_hash, ru.role AS ru_role,
                 su.first_name AS su_first_name, su.phone AS su_phone, su.last_name AS su_last_name, su.password_hash AS su_password_hash, su.role AS su_role
@@ -108,7 +109,7 @@ class ListingRepository(
 
         val base = """
             SELECT
-                l.id, l.title, l.description, l.price, l.created_at, l.lat, l.lon,
+                l.id, l.title, l.description, l.price, l.created_at, l.lat, l.lon, l.updated_at,
                 l.category, u.phone, u.first_name, u.last_name, b.user_id IS NOT NULL AS is_bookmarked,
                 ru.first_name AS ru_first_name, ru.phone AS ru_phone, ru.last_name AS ru_last_name, ru.password_hash AS ru_password_hash, ru.role AS ru_role,
                 su.first_name AS su_first_name, su.phone AS su_phone, su.last_name AS su_last_name, su.password_hash AS su_password_hash, su.role AS su_role
@@ -268,7 +269,7 @@ class ListingRepository(
     fun getListingsForUserId(userId: String, page: Pageable): List<Listing> {
         val sql = """
             SELECT
-                l.id, l.title, l.description, l.price, l.created_at, l.lat, l.lon,
+                l.id, l.title, l.description, l.price, l.created_at, l.lat, l.lon, l.updated_at,
                 l.category, u.phone, u.first_name, u.last_name, b.user_id IS NOT NULL AS is_bookmarked
             FROM listings l
                 JOIN users u ON l.author = u.phone
@@ -283,7 +284,7 @@ class ListingRepository(
     fun getBookmarked(userId: String, pageable: Pageable): List<BookmarkedListing> {
         val sql = """
             SELECT 
-                l.id, l.title, l.description, l.price, l.created_at, l.lat, l.lon,
+                l.id, l.title, l.description, l.price, l.created_at, l.lat, l.lon, l.updated_at,
                 l.category, u.phone, u.first_name, u.last_name, b.created_at AS bookmarked_at, TRUE AS is_bookmarked
             FROM bookmarks b 
                 JOIN listings l ON b.listing_id = l.id
