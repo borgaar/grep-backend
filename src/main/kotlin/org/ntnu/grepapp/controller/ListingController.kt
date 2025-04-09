@@ -46,7 +46,7 @@ class ListingController(
             sorting = sort,
             sortingDirection = sortDirection,
         )
-        val listings = service.getPaginatedAndFiltered(PageRequest.of(page, size), filter, authService.getCurrentUser())
+        val listings = service.getPaginatedAndFiltered(PageRequest.of(page, size), filter, authService.getCurrentUser().id)
 
         val listingsOut = ArrayList<ListingDTO>()
         for (l in listings) {
@@ -59,7 +59,7 @@ class ListingController(
 
     @GetMapping("/{id}")
     fun get(@PathVariable id: UUID): ResponseEntity<ListingDTO> {
-        val listing = service.find(id, authService.getCurrentUser()) ?: return ResponseEntity(HttpStatus.NOT_FOUND)
+        val listing = service.find(id, authService.getCurrentUser().id) ?: return ResponseEntity(HttpStatus.NOT_FOUND)
 
         val responseListing = toListingDTO(listing)
 
@@ -71,7 +71,7 @@ class ListingController(
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "100") pageSize: Int,
     ): ResponseEntity<List<ListingDTO>> {
-        val listings = service.getListingsForUserId(authService.getCurrentUser(), PageRequest.of(page, pageSize));
+        val listings = service.getListingsForUserId(authService.getCurrentUser().id, PageRequest.of(page, pageSize));
         return ResponseEntity.ok(
             listings.map {
                 toListingDTO(it, true)
@@ -86,7 +86,7 @@ class ListingController(
             title = request.title,
             description = request.description,
             price = request.price,
-            authorPhone = authService.getCurrentUser(),
+            authorPhone = authService.getCurrentUser().id,
             category = request.category,
             lat = request.location.lat,
             lon = request.location.lon
@@ -105,9 +105,8 @@ class ListingController(
 
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: UUID): ResponseEntity<Unit> {
-        val userId = authService.getCurrentUser()
-        val userRole = authService.getRole()
-        val deleted = service.delete(id, userId, userRole)
+        val user = authService.getCurrentUser()
+        val deleted = service.delete(id, user)
         val status = if (deleted) {
             HttpStatus.OK
         } else {
@@ -128,10 +127,11 @@ class ListingController(
             lon = listing.location.lon
         )
 
+        val user = authService.getCurrentUser()
         if (listing.bookmarked) {
-            service.createBookmark(id, authService.getCurrentUser())
+            service.createBookmark(id, user.id)
         } else {
-            service.deleteBookmark(id, authService.getCurrentUser())
+            service.deleteBookmark(id, user.id)
         }
 
         val updated = service.update(id, new)
@@ -146,7 +146,8 @@ class ListingController(
 
     @PostMapping("/reserve/{id}")
     fun reserve(@PathVariable id: UUID): ResponseEntity<Unit> {
-        val listing = service.find(id, authService.getCurrentUser()) ?: return ResponseEntity(
+        val user = authService.getCurrentUser()
+        val listing = service.find(id, user.id) ?: return ResponseEntity(
             HttpStatus.NOT_FOUND
         )
 
@@ -156,16 +157,16 @@ class ListingController(
         }
 
         // Make sure the user reserving is not the user that created the listing
-        if (listing.author.phone == authService.getCurrentUser()) {
+        if (listing.author.phone == user.id) {
             return ResponseEntity(HttpStatus.FORBIDDEN)
         }
 
         // Set the listing to reserved
-        service.setReserved(id, authService.getCurrentUser())
+        service.setReserved(id, user.id)
 
         // Send message to the author
         messageService.create(CreateChatMessage(
-            senderId = authService.getCurrentUser(),
+            senderId = user.id,
             recipientId = listing.author.phone,
             content = "", // message generated on frontend based on type
             type = ChatMessageType.RESERVED
@@ -180,7 +181,7 @@ class ListingController(
         @RequestParam("page", defaultValue = "0") page: Int,
         @RequestParam("pageSize", defaultValue = "100") pageSize: Int,
     ): List<BookmarkedListingDTO> {
-        return service.getBookmarked(authService.getCurrentUser(), PageRequest.of(page, pageSize))
+        return service.getBookmarked(authService.getCurrentUser().id, PageRequest.of(page, pageSize))
             .map {
                 BookmarkedListingDTO(
                     bookmarkedAt = it.bookmarkedAt,
@@ -192,11 +193,12 @@ class ListingController(
     @PostMapping("/{id}/sell/{phone}")
     fun markAsSold(@PathVariable id: UUID, @PathVariable phone: String): ResponseEntity<Unit> {
         // Make sure the user is the author
-        val listing = service.find(id, authService.getCurrentUser()) ?: return ResponseEntity(
+        val user = authService.getCurrentUser()
+        val listing = service.find(id, user.id) ?: return ResponseEntity(
             HttpStatus.NOT_FOUND
         )
 
-        if(listing.author.phone != authService.getCurrentUser()) {
+        if(listing.author.phone != user.id) {
             return ResponseEntity(HttpStatus.FORBIDDEN)
         }
 
@@ -204,7 +206,7 @@ class ListingController(
 
         // Send message to the user that bought the listing
         messageService.create(CreateChatMessage(
-            senderId = authService.getCurrentUser(),
+            senderId = user.id,
             recipientId = phone,
             content = "", // message generated on frontend based on type
             type = ChatMessageType.MARKED_SOLD

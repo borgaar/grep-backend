@@ -26,7 +26,7 @@ class MessageController(
     fun sendMessage(@RequestBody message: ChatSendRequest): ResponseEntity<ChatSendResponse> {
         logger.info(message.recipientId, message.toString());
         val newMessage = CreateChatMessage(
-            senderId = authService.getCurrentUser(),
+            senderId = authService.getCurrentUser().id,
             recipientId = message.recipientId,
             content = message.content,
         )

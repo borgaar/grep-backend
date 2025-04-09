@@ -21,7 +21,7 @@ class UserController (
 
     @GetMapping("/profile")
     fun getProfile(): ResponseEntity<ProfileGetResponse> {
-        val user = userService.getProfile(authService.getCurrentUser()) ?: return ResponseEntity(
+        val user = userService.getProfile(authService.getCurrentUser().id) ?: return ResponseEntity(
             HttpStatus.NOT_FOUND
         );
         val body = ProfileGetResponse(
@@ -36,7 +36,7 @@ class UserController (
     @PatchMapping("/profile")
     fun updateProfile(@RequestBody body: ProfileUpdateRequest): ResponseEntity<ProfileUpdateResponse> {
         val updated = userService.updateProfile(
-            authService.getCurrentUser(), body.phone, body.firstName, body.lastName
+            authService.getCurrentUser().id, body.phone, body.firstName, body.lastName
         )
 
         if (updated == null) {

@@ -172,11 +172,11 @@ class ListingRepository(
     }
 
     @Transactional
-    fun delete(id: UUID, userId: String, userRole: String): Boolean {
+    fun delete(id: UUID, userId: String, isAdmin: Boolean): Boolean {
         val parameters = ArrayList<String>()
         val bookmarkSql: String;
         val listingSql: String;
-        if (userRole == "admin") {
+        if (isAdmin) {
             parameters.addAll(listOf(id.toString()))
             bookmarkSql = """
                 DELETE FROM bookmarks

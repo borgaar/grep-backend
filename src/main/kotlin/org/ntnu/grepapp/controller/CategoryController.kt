@@ -33,8 +33,8 @@ class CategoryController(
 
     @PostMapping("/create")
     fun create(@RequestBody request: CategoryCreateRequest): ResponseEntity<Unit> {
-        val role = authService.getRole()
-        if (role != "admin") { return ResponseEntity(HttpStatus.FORBIDDEN) }
+        val user = authService.getCurrentUser()
+        if (user.isAdmin()) { return ResponseEntity(HttpStatus.FORBIDDEN) }
 
         val category = Category(request.name);
         val status = if (categoryService.create(category)) {
@@ -47,8 +47,8 @@ class CategoryController(
 
     @PatchMapping("/update")
     fun update(@RequestBody request: CategoryUpdateRequest): ResponseEntity<Unit> {
-        val role = authService.getRole()
-        if (role != "admin") { return ResponseEntity(HttpStatus.FORBIDDEN) }
+        val user = authService.getCurrentUser()
+        if (user.isAdmin()) { return ResponseEntity(HttpStatus.FORBIDDEN) }
 
         val new = Category(request.new.name);
         val status = if (categoryService.update(request.oldName, new)) {
@@ -61,8 +61,8 @@ class CategoryController(
 
     @DeleteMapping("/delete/{name}")
     fun delete(@PathVariable name: String): ResponseEntity<Unit> {
-        val role = authService.getRole()
-        if (role != "admin") { return ResponseEntity(HttpStatus.FORBIDDEN) }
+        val user = authService.getCurrentUser()
+        if (user.isAdmin()) { return ResponseEntity(HttpStatus.FORBIDDEN) }
 
         val status = if (categoryService.delete(name)) {
             HttpStatus.OK

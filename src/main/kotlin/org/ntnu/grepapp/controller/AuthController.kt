@@ -54,7 +54,7 @@ class AuthController(
     ): ResponseEntity<Unit> {
         try {
             authService.updatePassword(
-                authService.getCurrentUser(), request.oldPassword, request.newPassword
+                authService.getCurrentUser().id, request.oldPassword, request.newPassword
             )
         } catch (e: IllegalArgumentException) {
             return ResponseEntity(HttpStatus.BAD_REQUEST)
