@@ -49,7 +49,7 @@ class ListingController(
         val listings = service.getPaginatedAndFiltered(PageRequest.of(page, size), filter, authService.getCurrentUser().id)
 
         val listingsOut = ArrayList<ListingDTO>()
-        for (l in listings) {
+        for (l in listings.listings) {
             val dto = toListingDTO(l)
             listingsOut.add(dto)
         }

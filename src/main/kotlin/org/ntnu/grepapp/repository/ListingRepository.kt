@@ -96,7 +96,7 @@ class ListingRepository(
         return listing
     }
 
-    fun filterPaginate(page: Pageable, filter: ListingFilter, userId: String): List<Listing> {
+    fun filterPaginate(page: Pageable, filter: ListingFilter, userId: String): PaginatedListings {
         val sorting = when (filter.sorting) {
             "price" -> "l.price"
             else -> "l.id"
@@ -108,16 +108,22 @@ class ListingRepository(
         }
 
         val base = """
-            SELECT
-                l.id, l.title, l.description, l.price, l.created_at, l.lat, l.lon, l.updated_at,
-                l.category, u.phone, u.first_name, u.last_name, b.user_id IS NOT NULL AS is_bookmarked,
-                ru.first_name AS ru_first_name, ru.phone AS ru_phone, ru.last_name AS ru_last_name, ru.password_hash AS ru_password_hash, ru.role AS ru_role,
-                su.first_name AS su_first_name, su.phone AS su_phone, su.last_name AS su_last_name, su.password_hash AS su_password_hash, su.role AS su_role
+        SELECT
+            l.id, l.title, l.description, l.price, l.created_at, l.lat, l.lon, l.updated_at,
+            l.category, u.phone, u.first_name, u.last_name, b.user_id IS NOT NULL AS is_bookmarked,
+            ru.first_name AS ru_first_name, ru.phone AS ru_phone, ru.last_name AS ru_last_name, ru.password_hash AS ru_password_hash, ru.role AS ru_role,
+            su.first_name AS su_first_name, su.phone AS su_phone, su.last_name AS su_last_name, su.password_hash AS su_password_hash, su.role AS su_role
+        FROM listings l
+            JOIN users u ON l.author = u.phone
+            LEFT JOIN users ru ON l.reserved_by = ru.phone
+            LEFT JOIN users su ON l.reserved_by = su.phone
+            LEFT JOIN bookmarks b ON b.listing_id = l.id AND b.user_id = ?
+        WHERE ? <= l.price AND l.price <= ?
+    """
+
+        val countBase = """
+        SELECT COUNT(*) 
             FROM listings l
-                JOIN users u ON l.author = u.phone
-                LEFT JOIN users ru ON l.reserved_by = ru.phone
-                LEFT JOIN users su ON l.reserved_by = su.phone
-                LEFT JOIN bookmarks b ON b.listing_id = l.id AND b.user_id = ?
             WHERE ? <= l.price AND l.price <= ?
         """
 
@@ -140,14 +146,20 @@ class ListingRepository(
             keywordSearchWhere += "TRUE)"
         }
 
-
         val sql = """
-            $base
+        $base
+        $where
+        $keywordSearchWhere
+        ORDER BY $sorting $sortingDir, l.id
+        LIMIT ?
+        OFFSET ?
+    """
+
+        // separate query to get the total number of listings
+        val countSql = """
+            $countBase
             $where
             $keywordSearchWhere
-            ORDER BY $sorting $sortingDir, l.id
-            LIMIT ?
-            OFFSET ?
         """
 
         val parameters = ArrayList<Any>()
@@ -163,6 +175,9 @@ class ListingRepository(
             listOf("%$keyword%", "%$keyword%")
         });
 
+        // copy of parameters for the count query
+        val countParameters = ArrayList<Any>(parameters)
+
         parameters.add(page.pageSize)
         parameters.add(page.offset)
 
@@ -170,10 +185,21 @@ class ListingRepository(
             sql, rowMapper, *parameters.toTypedArray()
         )
 
+        // total number of listings
+        val totalCount = jdbc.queryForObject(
+            countSql,
+            Int::class.java,
+            *countParameters.toTypedArray()
+        ) ?: 0
+
         for (l in listings) {
             l.imageIds = addImagesForListing(l.id)
         }
-        return listings
+
+        return PaginatedListings(
+            listings,
+            totalListings = totalCount,
+        )
     }
 
     fun create(listing: NewListing): Boolean {
