@@ -105,7 +105,7 @@ class ListingController(
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: UUID): ResponseEntity<Unit> {
         val userId = authService.getCurrentUser()
-        val userRole = authService.getRole()
+        val userRole = jwtUtil.extractRoleFromToken(authService.getJWT())
         val deleted = service.delete(id, userId, userRole)
         val status = if (deleted) {
             HttpStatus.OK
