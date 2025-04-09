@@ -89,7 +89,7 @@ class ListingRepository(
 
         var keywordSearchWhere = " AND ("
         var keywords: List<String> = ArrayList();
-        if (filter.searchQuery != null) {
+        if (!filter.searchQuery.isNullOrEmpty()) {
             keywords = filter.searchQuery.split(" ");
             keywords.forEach({
                 keywordSearchWhere += "l.title LIKE ? OR l.description LIKE ? OR "
