@@ -38,10 +38,10 @@ class MessageService(
     }
 
     fun getHistory(page: Pageable, recipientId: String): List<ChatMessage> {
-        return repository.getList(page, recipientId, authService.getCurrentUser());
+        return repository.getList(page, recipientId, authService.getCurrentUser().id);
     }
 
     fun getContacts(page: Pageable): List<ChatContact> {
-        return repository.getContacts(page, authService.getCurrentUser());
+        return repository.getContacts(page, authService.getCurrentUser().id);
     }
 }

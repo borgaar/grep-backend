@@ -5,6 +5,7 @@ import org.ntnu.grepapp.model.RegisterUser
 import org.ntnu.grepapp.model.User
 import org.ntnu.grepapp.repository.UserRepository
 import org.ntnu.grepapp.security.JwtUtil
+import org.ntnu.grepapp.security.UserClaims
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
@@ -16,10 +17,20 @@ class AuthService(
 ) {
     private val passwordEncoder = BCryptPasswordEncoder()
 
-    fun getCurrentUser(): String {
+    fun getCurrentUser(): UserClaims {
         val authentication = SecurityContextHolder.getContext().authentication
         val phone = authentication.principal as String
-        return phone
+        return UserClaims(phone, getRole())
+    }
+
+    private fun getJWT(): String {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val jwt = authentication.credentials as String
+        return jwt
+    }
+
+    private fun getRole(): String {
+        return jwtUtil.extractRoleFromToken(getJWT())
     }
 
     fun generateToken(user: User): String {

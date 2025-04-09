@@ -2,6 +2,7 @@ package org.ntnu.grepapp.service
 
 import org.ntnu.grepapp.model.*
 import org.ntnu.grepapp.repository.ListingRepository
+import org.ntnu.grepapp.security.UserClaims
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.util.*
@@ -22,8 +23,8 @@ class ListingService(
         return repository.create(listing)
     }
 
-    fun delete(id: UUID): Boolean {
-        return repository.delete(id)
+    fun delete(id: UUID, user: UserClaims): Boolean {
+        return repository.delete(id, user.id, user.isAdmin())
     }
 
     fun update(id: UUID, new: UpdateListing): Boolean {

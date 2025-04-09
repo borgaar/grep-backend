@@ -1,5 +1,6 @@
 package org.ntnu.grepapp.repository
 
+import jakarta.transaction.Transactional
 import org.ntnu.grepapp.model.*
 import org.springframework.dao.DataAccessException
 import org.springframework.dao.EmptyResultDataAccessException
@@ -170,11 +171,37 @@ class ListingRepository(
         return affected != 0
     }
 
-    fun delete(id: UUID): Boolean {
-        val sql = """
-            DELETE FROM listings WHERE id = ?
-        """
-        val affected = jdbc.update(sql, id.toString())
+    @Transactional
+    fun delete(id: UUID, userId: String, isAdmin: Boolean): Boolean {
+        val parameters = ArrayList<String>()
+        val bookmarkSql: String;
+        val listingSql: String;
+        if (isAdmin) {
+            parameters.addAll(listOf(id.toString()))
+            bookmarkSql = """
+                DELETE FROM bookmarks
+                    WHERE listing_id = ?;
+            """
+
+            listingSql = """
+                DELETE FROM listings WHERE id = ?;
+            """
+        } else {
+            parameters.addAll(listOf(id.toString(), userId))
+            bookmarkSql = """
+                DELETE b FROM bookmarks b
+                    JOIN listings l ON b.listing_id = l.id
+                    WHERE l.id = ? AND l.author = ?;
+            """
+
+            listingSql = """
+                DELETE FROM listings 
+                    WHERE id = ? AND author = ?;
+            """
+        }
+
+        jdbc.update(bookmarkSql, *parameters.toTypedArray())
+        val affected = jdbc.update(listingSql, *parameters.toTypedArray())
         return affected != 0
     }
 
