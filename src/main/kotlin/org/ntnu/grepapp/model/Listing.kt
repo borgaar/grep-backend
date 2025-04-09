@@ -13,6 +13,7 @@ data class Listing(
     val lat: Double,
     val lon: Double,
     val category: Category,
+    var imageIds: List<UUID>,
     // user-specific
     val isBookmarked: Boolean,
     val reservedBy: User?,

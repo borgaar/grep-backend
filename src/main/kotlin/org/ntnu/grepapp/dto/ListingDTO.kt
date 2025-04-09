@@ -14,6 +14,8 @@ data class ListingDTO(
     val isReserved: Boolean,
     val isSold: Boolean,
 
+    val imageIds: List<String>,
+
     // user-specific
     val isBookmarked: Boolean,
 

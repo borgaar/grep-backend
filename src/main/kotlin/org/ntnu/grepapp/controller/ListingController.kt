@@ -124,7 +124,8 @@ class ListingController(
             price = listing.price,
             category = listing.category,
             lat = listing.location.lat,
-            lon = listing.location.lon
+            lon = listing.location.lon,
+            imageIds = listing.imageIds?.map { UUID.fromString(it) },
         )
 
         val user = authService.getCurrentUser()

@@ -1,6 +1,5 @@
 package org.ntnu.grepapp.repository
 
-import jakarta.transaction.Transactional
 import org.ntnu.grepapp.model.*
 import org.springframework.dao.DataAccessException
 import org.springframework.dao.EmptyResultDataAccessException
@@ -8,7 +7,9 @@ import org.springframework.data.domain.Pageable
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Repository
+import org.springframework.transaction.annotation.Transactional
 import java.util.*
+import kotlin.collections.ArrayList
 
 @Repository
 class ListingRepository(
@@ -31,6 +32,7 @@ class ListingRepository(
             category = Category(
                 name = rs.getString("category"),
             ),
+            imageIds = ArrayList(),
             isBookmarked = rs.getBoolean("is_bookmarked"),
             reservedBy = if (rs.getNString("ru_phone") != null) User(
                 phone = rs.getString("ru_phone"),
@@ -56,6 +58,19 @@ class ListingRepository(
         )
     }
 
+    private fun addImagesForListing(id: UUID): List<UUID> {
+        // expensive, but simpler and less error-prone than a proper query
+        val sql = """
+            SELECT li.image_id
+            FROM listing_images li
+            WHERE li.listing_id = ?
+        """
+        val mapper = RowMapper { rs, _ ->
+            UUID.fromString(rs.getString("image_id"))
+        }
+        return jdbc.query(sql, mapper, id.toString())
+    }
+
     fun find(id: UUID, userId: String): Listing? {
         val sql = """
             SELECT
@@ -70,11 +85,14 @@ class ListingRepository(
                 LEFT JOIN bookmarks b ON b.listing_id = l.id AND b.user_id = ?
             WHERE id = ?;
         """
-        return try {
-            jdbc.queryForObject(sql, rowMapper, userId, id.toString())
+        val listing = try {
+            jdbc.queryForObject(sql, rowMapper, userId, id.toString()) !!
         } catch (e: EmptyResultDataAccessException) {
-            null
+            return null
         }
+
+        listing.imageIds = addImagesForListing(id)
+        return listing
     }
 
     fun filterPaginate(page: Pageable, filter: ListingFilter, userId: String): List<Listing> {
@@ -147,9 +165,14 @@ class ListingRepository(
         parameters.add(page.pageSize)
         parameters.add(page.offset)
 
-        return jdbc.query(
+        val listings = jdbc.query(
             sql, rowMapper, *parameters.toTypedArray()
         )
+
+        for (l in listings) {
+            l.imageIds = addImagesForListing(l.id)
+        }
+        return listings
     }
 
     fun create(listing: NewListing): Boolean {
@@ -205,6 +228,7 @@ class ListingRepository(
         return affected != 0
     }
 
+    @Transactional
     fun update(id: UUID, new: UpdateListing): Boolean {
         val sql = """
             UPDATE listings
@@ -222,6 +246,22 @@ class ListingRepository(
             new.lon,
             id.toString()
         )
+
+        if (new.imageIds != null) {
+            val deleteImage = """
+                DELETE FROM listing_images
+                WHERE listing_id = ?
+            """
+            val insertImage = """
+                INSERT INTO listing_images (listing_id, image_id)
+                VALUES (?, ?)
+            """
+            jdbc.update(deleteImage, id.toString())
+            for (imageId in new.imageIds) {
+                jdbc.update(insertImage, id.toString(), imageId.toString())
+            }
+        }
+
         return affected != 0
     }
 

@@ -25,6 +25,8 @@ fun toListingDTO(value: Listing, isAuthor: Boolean = false): ListingDTO {
             lastName = value.author.lastName,
         ),
         isBookmarked = value.isBookmarked,
+        imageIds = value.imageIds.map { it.toString() },
+
         isReserved = value.reservedBy != null,
         isSold = value.soldTo != null,
         reservedBy = if (isAuthor && value.reservedBy != null) ListingDTO.AuthorDTO(

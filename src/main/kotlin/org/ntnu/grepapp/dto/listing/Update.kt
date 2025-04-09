@@ -8,5 +8,6 @@ data class ListingUpdateRequest(
     val price: Int,
     val category: String,
     val location: LocationDTO,
-    val bookmarked: Boolean
+    val bookmarked: Boolean,
+    val imageIds: List<String>? = null,
 )
