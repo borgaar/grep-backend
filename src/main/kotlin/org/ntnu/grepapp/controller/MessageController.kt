@@ -37,7 +37,7 @@ class MessageController(
     @GetMapping("/history")
     fun getHistory(
         @RequestParam(defaultValue = "0") page: Int,
-        @RequestParam(defaultValue = "5") pageSize: Int,
+        @RequestParam(defaultValue = "100") pageSize: Int,
         @RequestParam otherUser: String
     ): List<ChatMessageDTO> {
         logger.info("Get history");
@@ -56,7 +56,7 @@ class MessageController(
 
     @GetMapping("/contacts")
     fun getContacts(
-        @RequestParam(defaultValue = "0") page: Int, @RequestParam(defaultValue = "5") pageSize: Int
+        @RequestParam(defaultValue = "0") page: Int, @RequestParam(defaultValue = "100") pageSize: Int
     ): List<ChatContactDTO> {
         logger.info("Get contacts");
         logger.info(page.toString(), pageSize.toString());

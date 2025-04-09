@@ -8,4 +8,5 @@ data class UpdateRequest(
     val price: Int,
     val category: String,
     val location: LocationDTO,
+    val bookmarked: Boolean
 )

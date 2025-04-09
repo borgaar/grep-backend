@@ -1,12 +1,15 @@
 package org.ntnu.grepapp.controller
 
 import org.ntnu.grepapp.dto.BookmarkedListingDTO
+import org.ntnu.grepapp.dto.CategoryDTO
 import org.ntnu.grepapp.dto.ListingDTO
+import org.ntnu.grepapp.dto.LocationDTO
 import org.ntnu.grepapp.dto.listing.*
 import org.ntnu.grepapp.mapping.toListingDTO
 import org.ntnu.grepapp.model.ListingFilter
 import org.ntnu.grepapp.model.NewListing
 import org.ntnu.grepapp.model.UpdateListing
+import org.ntnu.grepapp.repository.ListingRepository
 import org.ntnu.grepapp.service.AuthService
 import org.ntnu.grepapp.service.ListingService
 import org.springframework.data.domain.PageRequest
@@ -42,7 +45,7 @@ class ListingController(
             sorting = sort,
             sortingDirection = sortDirection,
         )
-        val listings = service.getPaginatedAndFiltered(PageRequest.of(page, size), filter)
+        val listings = service.getPaginatedAndFiltered(PageRequest.of(page, size), filter, authService.getCurrentUser())
 
         val listingsOut = ArrayList<ListingDTO>()
         for (l in listings) {
@@ -55,11 +58,24 @@ class ListingController(
 
     @GetMapping("/{id}")
     fun get(@PathVariable id: UUID): ResponseEntity<ListingDTO> {
-        val listing = service.find(id) ?: return ResponseEntity(HttpStatus.NOT_FOUND)
+        val listing = service.find(id, authService.getCurrentUser()) ?: return ResponseEntity(HttpStatus.NOT_FOUND)
 
         val responseListing = toListingDTO(listing)
 
         return ResponseEntity.ok(responseListing)
+    }
+
+    @GetMapping("/personal")
+    fun getOwnListings(
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "100") pageSize: Int,
+    ): ResponseEntity<List<ListingDTO>> {
+        val listings = service.getListingsForUserId(authService.getCurrentUser(), PageRequest.of(page, pageSize));
+        return ResponseEntity.ok(
+            listings.map {
+                toListingDTO(it)
+            }
+        );
     }
 
     @PostMapping
@@ -110,6 +126,12 @@ class ListingController(
             lon = listing.location.lon
         )
 
+        if (listing.bookmarked) {
+            service.createBookmark(id, authService.getCurrentUser())
+        } else {
+            service.deleteBookmark(id, authService.getCurrentUser())
+        }
+
         val updated = service.update(id, new)
         val status = if (updated) {
             HttpStatus.OK
@@ -127,10 +149,17 @@ class ListingController(
         return ResponseEntity(status)
     }
 
-    @PostMapping("/bookmarked")
-    fun bookmarked(): List<BookmarkedListingDTO> {
-        // TODO
-        val listings = ArrayList<BookmarkedListingDTO>()
-        return listings
+    @GetMapping("/bookmarked")
+    fun bookmarked(
+        @RequestParam("page", defaultValue = "0") page: Int,
+        @RequestParam("pageSize", defaultValue = "100") pageSize: Int,
+    ): List<BookmarkedListingDTO> {
+        return service.getBookmarked(authService.getCurrentUser(), PageRequest.of(page, pageSize))
+            .map {
+                BookmarkedListingDTO(
+                    bookmarkedAt = it.bookmarkedAt,
+                    listing = toListingDTO(it.listing)
+                )
+            }
     }
 }

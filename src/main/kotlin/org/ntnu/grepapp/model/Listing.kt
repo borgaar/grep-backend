@@ -13,4 +13,6 @@ data class Listing(
     val lat: Double,
     val lon: Double,
     val category: Category,
+    // user-specific
+    val isBookmarked: Boolean,
 )
