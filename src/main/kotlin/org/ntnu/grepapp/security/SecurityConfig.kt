@@ -92,7 +92,7 @@ class JWTAuthenticationFilter() : OncePerRequestFilter() {
     val auth =
             UsernamePasswordAuthenticationToken(
                     userEmail,
-                    null,
+                    jwt,
                     listOf(SimpleGrantedAuthority("USER"))
             )
     SecurityContextHolder.getContext().authentication = auth
