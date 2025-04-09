@@ -48,7 +48,6 @@ class AuthService(
 
     fun register(user: RegisterUser): User? {
         val hashed = hashPassword(user.passwordRaw)
-        println(hashed)
         if (userRepository.find(user.phone) != null) {
             return null
         }
