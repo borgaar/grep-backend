@@ -9,6 +9,7 @@ data class ListingDTO(
     val location: LocationDTO,
     val price: Int,
     val createdAt: LocalDateTime,
+    val updatedAt: LocalDateTime,
     val category: CategoryDTO,
     val author: AuthorDTO,
     val isReserved: Boolean,

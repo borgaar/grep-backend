@@ -10,6 +10,7 @@ data class Listing(
     val author: ListingAuthor,
     val price: Int,
     val timestamp: LocalDateTime,
+    val updatedAt: LocalDateTime,
     val lat: Double,
     val lon: Double,
     val category: Category,

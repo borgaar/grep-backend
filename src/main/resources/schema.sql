@@ -29,6 +29,7 @@ CREATE TABLE listings
     description TEXT                 NOT NULL,
     price       INT                  NOT NULL,
     created_at  TIMESTAMP            NOT NULL DEFAULT NOW(),
+    updated_at  TIMESTAMP            NOT NULL DEFAULT NOW(),
     lat         DOUBLE               NOT NULL,
     lon         DOUBLE               NOT NULL,
     reserved_by VARCHAR(20)          NULL REFERENCES users (phone) ON UPDATE CASCADE ON DELETE SET NULL,
