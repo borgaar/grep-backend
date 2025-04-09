@@ -94,8 +94,11 @@ class ListingRepository(
             keywords.forEach({
                 keywordSearchWhere += "l.title LIKE ? OR l.description LIKE ? OR "
             });
+            keywordSearchWhere += "FALSE)"
+        } else {
+            keywordSearchWhere += "TRUE)"
         }
-        keywordSearchWhere += "FALSE)";
+
 
 
         val sql = """
