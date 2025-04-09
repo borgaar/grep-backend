@@ -1,9 +1,9 @@
 package org.ntnu.grepapp.controller
 
 import org.apache.logging.log4j.LogManager
-import org.ntnu.grepapp.dto.profile.GetResponse
-import org.ntnu.grepapp.dto.profile.UpdateRequest
-import org.ntnu.grepapp.dto.profile.UpdateResponse
+import org.ntnu.grepapp.dto.profile.ProfileGetResponse
+import org.ntnu.grepapp.dto.profile.ProfileUpdateRequest
+import org.ntnu.grepapp.dto.profile.ProfileUpdateResponse
 import org.ntnu.grepapp.service.AuthService
 import org.ntnu.grepapp.service.UserService
 import org.springframework.http.HttpStatus
@@ -20,11 +20,11 @@ class UserController (
     private val logger = LogManager.getLogger(this::class::java);
 
     @GetMapping("/profile")
-    fun getProfile(): ResponseEntity<GetResponse> {
+    fun getProfile(): ResponseEntity<ProfileGetResponse> {
         val user = userService.getProfile(authService.getCurrentUser()) ?: return ResponseEntity(
             HttpStatus.NOT_FOUND
         );
-        val body = GetResponse(
+        val body = ProfileGetResponse(
             user.phone,
             user.firstName,
             user.lastName,
@@ -34,7 +34,7 @@ class UserController (
     }
 
     @PatchMapping("/profile")
-    fun updateProfile(@RequestBody body: UpdateRequest): ResponseEntity<UpdateResponse> {
+    fun updateProfile(@RequestBody body: ProfileUpdateRequest): ResponseEntity<ProfileUpdateResponse> {
         val updated = userService.updateProfile(
             authService.getCurrentUser(), body.phone, body.firstName, body.lastName
         )
@@ -42,7 +42,7 @@ class UserController (
         if (updated == null) {
             return ResponseEntity(HttpStatus.NOT_FOUND);
         }
-        val out = UpdateResponse(
+        val out = ProfileUpdateResponse(
             updated.phone,
             updated.firstName,
             updated.lastName,

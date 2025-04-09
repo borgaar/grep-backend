@@ -1,6 +1,6 @@
 package org.ntnu.grepapp.dto.auth
 
-data class UpdatePasswordRequest(
+data class AuthUpdatePasswordRequest(
     val oldPassword: String,
     val newPassword: String,
 )

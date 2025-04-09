@@ -1,11 +1,11 @@
 package org.ntnu.grepapp.dto.auth
 
-data class LoginRequest(
+data class AuthLoginRequest(
     val phone: String,
     val password: String,
 )
 
-data class LoginResponse(
+data class AuthLoginResponse(
     val token: String,
     val firstName: String,
     val lastName: String,

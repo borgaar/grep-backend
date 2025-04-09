@@ -20,11 +20,11 @@ class MessageController(
     private val logger = LogManager.getLogger(this::class.java)
 
     @PostMapping("/send")
-    fun sendMessage(@RequestBody message: SendRequest): ResponseEntity<SendResponse> {
+    fun sendMessage(@RequestBody message: ChatSendRequest): ResponseEntity<ChatSendResponse> {
         logger.info(message.recipientId, message.toString());
         val createdMessage = messageService.create(message)?: return ResponseEntity(HttpStatus.BAD_REQUEST);
         return ResponseEntity.ok(
-            SendResponse(
+            ChatSendResponse(
                 id = createdMessage.id,
                 senderId = createdMessage.senderId,
                 recipientId = createdMessage.recipientId,

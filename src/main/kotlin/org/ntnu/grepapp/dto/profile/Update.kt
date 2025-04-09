@@ -1,12 +1,12 @@
 package org.ntnu.grepapp.dto.profile
 
-data class UpdateRequest(
+data class ProfileUpdateRequest(
     val phone: String?,
     val firstName: String?,
     val lastName: String?,
 )
 
-data class UpdateResponse(
+data class ProfileUpdateResponse(
       val phone: String,
       val firstName: String,
       val lastName: String,
