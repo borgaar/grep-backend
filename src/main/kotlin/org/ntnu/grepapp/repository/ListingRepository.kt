@@ -1,6 +1,5 @@
 package org.ntnu.grepapp.repository
 
-import jakarta.transaction.Transactional
 import org.ntnu.grepapp.model.*
 import org.springframework.dao.DataAccessException
 import org.springframework.dao.EmptyResultDataAccessException
@@ -8,6 +7,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Repository
+import org.springframework.transaction.annotation.Transactional
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -228,6 +228,7 @@ class ListingRepository(
         return affected != 0
     }
 
+    @Transactional
     fun update(id: UUID, new: UpdateListing): Boolean {
         val sql = """
             UPDATE listings
@@ -245,6 +246,22 @@ class ListingRepository(
             new.lon,
             id.toString()
         )
+
+        if (new.imageIds != null) {
+            val deleteImage = """
+                DELETE FROM listing_images
+                WHERE listing_id = ?
+            """
+            val insertImage = """
+                INSERT INTO listing_images (listing_id, image_id)
+                VALUES (?, ?)
+            """
+            jdbc.update(deleteImage, id.toString())
+            for (imageId in new.imageIds) {
+                jdbc.update(insertImage, id.toString(), imageId.toString())
+            }
+        }
+
         return affected != 0
     }
 
