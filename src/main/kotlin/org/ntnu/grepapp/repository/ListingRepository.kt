@@ -234,7 +234,8 @@ class ListingRepository(
         val sql = """
             UPDATE listings
             SET title = ?, description = ?,
-                category = ?, price = ?, lat = ?, lon = ?
+                category = ?, price = ?, lat = ?, lon = ?,
+                updated_at = NOW()
             WHERE id = ?
         """
         val affected = jdbc.update(
