@@ -15,6 +15,7 @@ fun toListingDTO(value: Listing, isAuthor: Boolean = false): ListingDTO {
         ),
         price = value.price,
         createdAt = value.timestamp,
+        updatedAt = value.updatedAt,
         category = CategoryDTO(
             name = value.category.name,
         ),
