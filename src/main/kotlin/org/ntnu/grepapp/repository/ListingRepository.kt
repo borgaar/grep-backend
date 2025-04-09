@@ -87,10 +87,21 @@ class ListingRepository(
             "AND TRUE"
         }
 
+        var keywordSearchWhere = " AND ("
+        var keywords: List<String> = ArrayList();
+        if (filter.searchQuery != null) {
+            keywords = filter.searchQuery.split(" ");
+            keywords.forEach({
+                keywordSearchWhere += "l.title LIKE ? OR l.description LIKE ? OR "
+            });
+        }
+        keywordSearchWhere += "FALSE)";
+
+
         val sql = """
             $base
             $where
-                AND Locate(?, l.title) != 0
+            $keywordSearchWhere
             ORDER BY $sorting $sortingDir, l.id
             LIMIT ?
             OFFSET ?
@@ -105,7 +116,10 @@ class ListingRepository(
             parameters.addAll(filter.categories)
         }
 
-        parameters.add(filter.titleQuery ?: "")
+        parameters.addAll(keywords.flatMap { keyword ->
+            listOf("%$keyword%", "%$keyword%")
+        });
+
         parameters.add(page.pageSize)
         parameters.add(page.offset)
 
