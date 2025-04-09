@@ -22,6 +22,16 @@ class AuthService(
         return phone
     }
 
+    fun getJWT(): String {
+        val authentication = SecurityContextHolder.getContext().authentication
+        val jwt = authentication.credentials as String
+        return jwt
+    }
+
+    fun getRole(): String {
+        return jwtUtil.extractRoleFromToken(getJWT())
+    }
+
     fun generateToken(user: User): String {
         return jwtUtil.generateToken(user.phone, user.role)
     }

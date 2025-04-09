@@ -13,7 +13,6 @@ class JwtUtil {
             .encode("d0711dd32236d7b6b0bd7e987df696bc06256358b4eb3736f11575ca5f4f704ed7eb40bbce20e0c2f2efc23ebdc00893e6fc770fb3c176d719bcc7b2ad3aab92".toByteArray())
     )
 
-
     fun generateToken(phone: String, role: String): String {
         return Jwts.builder()
             .setSubject(phone)
@@ -30,4 +29,13 @@ class JwtUtil {
             .body.subject
     }
 
+    fun extractRoleFromToken(token: String): String {
+        val claims = Jwts.parserBuilder()
+            .setSigningKey(secretKey)
+            .build()
+            .parseClaimsJws(token)
+            .body
+
+        return claims["role"] as String
+    }
 }

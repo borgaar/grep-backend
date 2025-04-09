@@ -170,11 +170,20 @@ class ListingRepository(
         return affected != 0
     }
 
-    fun delete(id: UUID): Boolean {
-        val sql = """
-            DELETE FROM listings WHERE id = ?
-        """
-        val affected = jdbc.update(sql, id.toString())
+    fun delete(id: UUID, userId: String, userRole: String): Boolean {
+        val parameters = ArrayList<String>()
+        val sql = if (userRole == "admin") {
+            parameters.add(id.toString())
+            """
+                DELETE FROM listings WHERE id = ?
+            """
+        } else {
+            parameters.addAll(listOf(id.toString(), userId))
+            """
+                DELETE FROM listings WHERE id = ? AND author = ?
+            """
+        }
+        val affected = jdbc.update(sql, *parameters.toTypedArray())
         return affected != 0
     }
 

@@ -4,6 +4,10 @@ import org.ntnu.grepapp.dto.BookmarkedListingDTO
 import org.ntnu.grepapp.dto.ListingDTO
 import org.ntnu.grepapp.dto.listing.*
 import org.ntnu.grepapp.mapping.toListingDTO
+import org.ntnu.grepapp.model.ListingFilter
+import org.ntnu.grepapp.model.NewListing
+import org.ntnu.grepapp.model.UpdateListing
+import org.ntnu.grepapp.security.JwtUtil
 import org.ntnu.grepapp.model.*
 import org.ntnu.grepapp.service.AuthService
 import org.ntnu.grepapp.service.ListingService
@@ -21,6 +25,7 @@ import kotlin.collections.ArrayList
 class ListingController(
     val service: ListingService,
     val authService: AuthService,
+    val jwtUtil: JwtUtil,
     private val messageService: MessageService,
 ) {
     @GetMapping
@@ -101,7 +106,9 @@ class ListingController(
 
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: UUID): ResponseEntity<Unit> {
-        val deleted = service.delete(id)
+        val userId = authService.getCurrentUser()
+        val userRole = authService.getRole()
+        val deleted = service.delete(id, userId, userRole)
         val status = if (deleted) {
             HttpStatus.OK
         } else {

@@ -22,8 +22,8 @@ class ListingService(
         return repository.create(listing)
     }
 
-    fun delete(id: UUID): Boolean {
-        return repository.delete(id)
+    fun delete(id: UUID, userId: String, userRole: String): Boolean {
+        return repository.delete(id, userId, userRole)
     }
 
     fun update(id: UUID, new: UpdateListing): Boolean {
