@@ -27,7 +27,7 @@ class ImageController(
         val images = imageService.load(imageIds.map { UUID.fromString(it) })
         val map = HashMap<String, String>()
         for (img in images) {
-            map[img.id.toString()] = img.buffer
+            map[img.id.toString()] = img.buffer.toString()
         }
         return ResponseEntity.ok(map)
     }

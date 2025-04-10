@@ -48,7 +48,7 @@ CREATE TABLE messages
 
 CREATE TABLE images (
     id CHAR(36) NOT NULL PRIMARY KEY,
-    buffer TEXT NOT NULL -- base64
+    buffer LONGTEXT NOT NULL -- base64
 );
 
 CREATE TABLE listing_images (
