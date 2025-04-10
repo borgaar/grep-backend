@@ -20,3 +20,7 @@ data class ListingCreateRequest(
     @Schema(description = "Category name of the listing", example = "Electronics", required = true)
     val category: String,
 )
+
+data class ListingCreateResponse(
+    val id: String,
+)

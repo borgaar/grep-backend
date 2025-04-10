@@ -13,8 +13,6 @@ import org.ntnu.grepapp.model.Category
 import org.ntnu.grepapp.service.CategoryService
 import org.apache.logging.log4j.LogManager
 import org.ntnu.grepapp.dto.CategoryDTO
-import org.ntnu.grepapp.security.JwtUtil
-import org.ntnu.grepapp.security.JwtUtil.*
 import org.ntnu.grepapp.service.AuthService
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
@@ -93,7 +91,7 @@ class CategoryController(
     @PostMapping("/create")
     fun create(@RequestBody request: CategoryCreateRequest): ResponseEntity<Unit> {
         val user = authService.getCurrentUser()
-        if (user.isAdmin()) { return ResponseEntity(HttpStatus.FORBIDDEN) }
+        if (user.isNotAdmin()) { return ResponseEntity(HttpStatus.FORBIDDEN) }
 
         val category = Category(request.name);
         val status = if (categoryService.create(category)) {
@@ -135,7 +133,7 @@ class CategoryController(
     @PatchMapping("/update")
     fun update(@RequestBody request: CategoryUpdateRequest): ResponseEntity<Unit> {
         val user = authService.getCurrentUser()
-        if (user.isAdmin()) { return ResponseEntity(HttpStatus.FORBIDDEN) }
+        if (user.isNotAdmin()) { return ResponseEntity(HttpStatus.FORBIDDEN) }
 
         val new = Category(request.new.name);
         val status = if (categoryService.update(request.oldName, new)) {
@@ -180,7 +178,7 @@ class CategoryController(
         @PathVariable name: String
     ): ResponseEntity<Unit> {
         val user = authService.getCurrentUser()
-        if (user.isAdmin()) { return ResponseEntity(HttpStatus.FORBIDDEN) }
+        if (user.isNotAdmin()) { return ResponseEntity(HttpStatus.FORBIDDEN) }
 
         val status = if (categoryService.delete(name)) {
             HttpStatus.OK

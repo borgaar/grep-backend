@@ -86,9 +86,9 @@ class ImageController(
     fun download(
         @Parameter(description = "List of image IDs to retrieve", example = "[\"a1b2c3d4-e5f6-7890-abcd-ef1234567890\"]", required = true)
         @RequestParam imageIds: List<String>
-    ): ResponseEntity<Map<String, String>> {
+    ): ResponseEntity<Map<String, ByteArray>> {
         val images = imageService.load(imageIds.map { UUID.fromString(it) })
-        val map = HashMap<String, String>()
+        val map = HashMap<String, ByteArray>()
         for (img in images) {
             map[img.id.toString()] = img.buffer
         }
