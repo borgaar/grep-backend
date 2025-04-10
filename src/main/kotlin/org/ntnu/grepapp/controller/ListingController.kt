@@ -37,7 +37,7 @@ class ListingController(
         @RequestParam query: String?,
         @RequestParam sort: String?,
         @RequestParam sortDirection: String?,
-    ): ResponseEntity<List<ListingDTO>> {
+    ): ResponseEntity<GetPaginatedResponse> {
         val filter = ListingFilter(
             priceLower = priceLower,
             priceUpper = priceUpper,
@@ -49,12 +49,17 @@ class ListingController(
         val listings = service.getPaginatedAndFiltered(PageRequest.of(page, size), filter, authService.getCurrentUser().id)
 
         val listingsOut = ArrayList<ListingDTO>()
-        for (l in listings) {
+        for (l in listings.listings) {
             val dto = toListingDTO(l)
             listingsOut.add(dto)
         }
 
-        return ResponseEntity.ok(listingsOut)
+        val response = GetPaginatedResponse(
+            listingsOut,
+            totalListings = listings.totalListings
+        )
+
+        return ResponseEntity.ok(response)
     }
 
     @GetMapping("/{id}")

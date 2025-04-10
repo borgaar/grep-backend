@@ -15,7 +15,7 @@ class ListingService(
         return repository.find(id, userId)
     }
 
-    fun getPaginatedAndFiltered(page: Pageable, filter: ListingFilter, userId: String): List<Listing> {
+    fun getPaginatedAndFiltered(page: Pageable, filter: ListingFilter, userId: String): PaginatedListings {
         return repository.filterPaginate(page, filter, userId)
     }
 
