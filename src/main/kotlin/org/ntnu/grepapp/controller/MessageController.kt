@@ -13,6 +13,10 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
+/**
+ * REST controller for message-related operations.
+ * Provides endpoints for sending messages, retrieving message history, and managing contacts.
+ */
 @RestController
 @RequestMapping("/api/message")
 @CrossOrigin(origins = ["http://localhost:5173", "*"])
@@ -22,6 +26,14 @@ class MessageController(
 ) {
     private val logger = LogManager.getLogger(this::class.java)
 
+    /**
+     * Sends a new message to a recipient.
+     *
+     * @param message A ChatSendRequest containing the recipient ID and message content
+     * @return ResponseEntity containing:
+     *         - A ChatSendResponse with the created message details if successful
+     *         - HTTP 400 BAD_REQUEST status if the message couldn't be created
+     */
     @PostMapping("/send")
     fun sendMessage(@RequestBody message: ChatSendRequest): ResponseEntity<ChatSendResponse> {
         logger.info(message.recipientId, message.toString());
@@ -44,6 +56,14 @@ class MessageController(
         )
     }
 
+    /**
+     * Retrieves message history between the current user and another user.
+     *
+     * @param page The page number to retrieve (zero-based), defaults to 0
+     * @param pageSize The number of messages per page, defaults to 100
+     * @param otherUser The phone number of the other user in the conversation
+     * @return A list of ChatMessageDTO objects representing the message history
+     */
     @GetMapping("/history")
     fun getHistory(
         @RequestParam(defaultValue = "0") page: Int,
@@ -65,6 +85,13 @@ class MessageController(
         ) }
     }
 
+    /**
+     * Retrieves a list of contacts that the current user has exchanged messages with.
+     *
+     * @param page The page number to retrieve (zero-based), defaults to 0
+     * @param pageSize The number of contacts per page, defaults to 100
+     * @return A list of ChatContactDTO objects representing the user's contacts
+     */
     @GetMapping("/contacts")
     fun getContacts(
         @RequestParam(defaultValue = "0") page: Int, @RequestParam(defaultValue = "100") pageSize: Int

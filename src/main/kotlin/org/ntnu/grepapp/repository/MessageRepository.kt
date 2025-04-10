@@ -9,10 +9,18 @@ import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Repository
 
+/**
+ * Repository class for handling database operations related to messages.
+ * Provides methods for storing and retrieving messages and contacts.
+ */
 @Repository
 class MessageRepository(
     private var jdbc: JdbcTemplate
 ) {
+
+    /**
+     * Row mapper for converting database rows to ChatMessage objects.
+     */
     private val rowMapper = RowMapper { rs, _ ->
         ChatMessage(
             id = rs.getString("id"),
@@ -24,6 +32,9 @@ class MessageRepository(
         )
     }
 
+    /**
+     * Row mapper for converting database rows to ChatContact objects.
+     */
     private val contactRowMapper = RowMapper { rs, _ ->
         ChatContact(
             phone = rs.getString("phone"),
@@ -36,6 +47,11 @@ class MessageRepository(
 
     private val logger = LogManager.getLogger(this::class::java);
 
+    /**
+     * Creates a new message in the database.
+     *
+     * @param message The ChatMessage object to persist
+     */
     fun create(message: ChatMessage) {
         val sql = """
             INSERT INTO messages(id, sender_id, recipient_id, content, timestamp, type)
@@ -46,6 +62,14 @@ class MessageRepository(
         )
     }
 
+    /**
+     * Retrieves messages between two users with pagination.
+     *
+     * @param pagination Pagination information including page size and offset
+     * @param senderId The ID of one user in the conversation
+     * @param recipientId The ID of the other user in the conversation
+     * @return A list of ChatMessage objects representing the conversation history
+     */
     fun getList(pagination: Pageable, senderId: String, recipientId: String): List<ChatMessage> {
         val sql = """
             SELECT id, sender_id, recipient_id, content, timestamp, type
@@ -60,6 +84,13 @@ class MessageRepository(
         )
     }
 
+    /**
+     * Retrieves a list of contacts that a user has exchanged messages with.
+     *
+     * @param pagination Pagination information including page size and offset
+     * @param userId The ID of the user whose contacts to retrieve
+     * @return A list of ChatContact objects representing the user's contacts
+     */
     fun getContacts(pagination: Pageable, userId: String): List<ChatContact> {
         val sql = """
             WITH contacts (one, other) AS (
