@@ -32,9 +32,9 @@ mvn clean
 mvn spring-boot:run
 ```
 
-**Note:** The database will be wiped everytime the server starts. To stop this, comment out (add `#` at the start of the line) `spring.sql.init.mode=always` in `src/main/resources/application.properties`. Note that the schema.sql must then be manually run after the database is started.
-
 To populate the database with some initial mock-data, you can run the `mockdata.sql` script.
+
+**Note:** The database will be wiped everytime the server starts. To stop this, comment out (add `#` at the start of the line) `spring.sql.init.mode=always` in `src/main/resources/application.properties`. Note that the schema.sql must then be manually run after the database is started.
 
 ## Run the test
 
