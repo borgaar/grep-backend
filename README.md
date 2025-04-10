@@ -15,7 +15,9 @@ The backend is built using the following technologies:
 
 ## Setup project
 
-First clone the repository:
+If you have the zip file, extract it to a folder of your choice.
+
+Alternatively clone the repository:
 
 ```bash
 git clone https://github.com/borgaar/grep-backend && cd grep-backend
