@@ -23,11 +23,11 @@ class ImageController(
     }
 
     @GetMapping
-    fun download(@RequestParam imageIds: List<String>): ResponseEntity<Map<String, String>> {
+    fun download(@RequestParam imageIds: List<String>): ResponseEntity<Map<String, ByteArray>> {
         val images = imageService.load(imageIds.map { UUID.fromString(it) })
-        val map = HashMap<String, String>()
+        val map = HashMap<String, ByteArray>()
         for (img in images) {
-            map[img.id.toString()] = img.buffer.toString()
+            map[img.id.toString()] = img.buffer
         }
         return ResponseEntity.ok(map)
     }
