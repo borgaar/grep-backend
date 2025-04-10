@@ -1,5 +1,12 @@
 package org.ntnu.grepapp.controller
 
+
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.apache.logging.log4j.LogManager
 import org.ntnu.grepapp.dto.auth.*
 import org.ntnu.grepapp.model.RegisterUser
@@ -15,6 +22,7 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api/auth")
 @CrossOrigin(origins = ["http://localhost:5173"])
+@Tag(name = "Authentication", description = "Authentication API for user registration, login, and password management")
 class AuthController(
     private val authService: AuthService,
 ) {
@@ -28,6 +36,22 @@ class AuthController(
      *         - An AuthRegisterResponse with the generated token and user details if registration is successful
      *         - HTTP 409 CONFLICT status if a user with the same phone number already exists
      */
+    @Operation(
+        summary = "Register a new user",
+        description = "Creates a new user account with the provided information"
+    )
+    @ApiResponses(value = [
+        ApiResponse(
+            responseCode = "200",
+            description = "User successfully registered",
+            content = [Content(mediaType = "application/json", schema = Schema(implementation = AuthRegisterResponse::class))]
+        ),
+        ApiResponse(
+            responseCode = "409",
+            description = "User with this phone number already exists",
+            content = [Content(mediaType = "application/json")]
+        )
+    ])
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     fun register(@RequestBody request: AuthRegisterRequest): ResponseEntity<AuthRegisterResponse> {
@@ -56,6 +80,22 @@ class AuthController(
      *         - An AuthLoginResponse with the generated token and user details if authentication is successful
      *         - HTTP 404 NOT_FOUND status if the user doesn't exist or credentials are invalid
      */
+    @Operation(
+        summary = "Login user",
+        description = "Authenticates a user with phone number and password, and returns a JWT token"
+    )
+    @ApiResponses(value = [
+        ApiResponse(
+            responseCode = "200",
+            description = "User successfully authenticated",
+            content = [Content(mediaType = "application/json", schema = Schema(implementation = AuthLoginResponse::class))]
+        ),
+        ApiResponse(
+            responseCode = "404",
+            description = "User not found or invalid credentials",
+            content = [Content(mediaType = "application/json")]
+        )
+    ])
     @PostMapping("/login")
     fun login(@RequestBody request: AuthLoginRequest): ResponseEntity<AuthLoginResponse> {
         val user = authService.login(request.phone, request.password) ?: return ResponseEntity(HttpStatus.NOT_FOUND)
@@ -76,6 +116,27 @@ class AuthController(
      *         - OK if the password was successfully updated
      *         - BAD_REQUEST if the old password is incorrect
      */
+    @Operation(
+        summary = "Update password",
+        description = "Updates the password of the currently authenticated user"
+    )
+    @ApiResponses(value = [
+        ApiResponse(
+            responseCode = "200",
+            description = "Password successfully updated",
+            content = [Content(mediaType = "application/json")]
+        ),
+        ApiResponse(
+            responseCode = "400",
+            description = "Old password is incorrect",
+            content = [Content(mediaType = "application/json")]
+        ),
+        ApiResponse(
+            responseCode = "401",
+            description = "User is not authenticated",
+            content = [Content(mediaType = "application/json")]
+        )
+    ])
     @PutMapping("/password")
     fun updatePassword(
         @RequestBody request: AuthUpdatePasswordRequest
