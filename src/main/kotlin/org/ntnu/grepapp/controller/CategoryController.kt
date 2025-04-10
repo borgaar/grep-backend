@@ -22,6 +22,13 @@ class CategoryController(
 ) {
     private val logger = LogManager.getLogger(this::class::java);
 
+    /**
+     * Retrieves a paginated list of all categories.
+     *
+     * @param page The page number to retrieve (zero-based)
+     * @param pageSize The number of categories to include per page
+     * @return A list of CategoryDTO objects representing the categories on the requested page
+     */
     @GetMapping
     fun getAll(
         @RequestParam page: Int,
@@ -31,6 +38,16 @@ class CategoryController(
         return list.map { CategoryDTO(it.name) }
     }
 
+    /**
+     * Creates a new category in the system.
+     * This endpoint is restricted to admin users only.
+     *
+     * @param request The CategoryCreateRequest containing the name of the new category
+     * @return ResponseEntity with HTTP status:
+     *         - OK if the category was successfully created
+     *         - CONFLICT if a category with the same name already exists
+     *         - FORBIDDEN if the current user is not an admin
+     */
     @PostMapping("/create")
     fun create(@RequestBody request: CategoryCreateRequest): ResponseEntity<Unit> {
         val user = authService.getCurrentUser()
@@ -45,6 +62,16 @@ class CategoryController(
         return ResponseEntity(status)
     }
 
+    /**
+     * Updates an existing category with a new name.
+     * This endpoint is restricted to admin users only.
+     *
+     * @param request The CategoryUpdateRequest containing the old category name and the new category details
+     * @return ResponseEntity with HTTP status:
+     *         - OK if the category was successfully updated
+     *         - CONFLICT if a category with the new name already exists or the old category wasn't found
+     *         - FORBIDDEN if the current user is not an admin
+     */
     @PatchMapping("/update")
     fun update(@RequestBody request: CategoryUpdateRequest): ResponseEntity<Unit> {
         val user = authService.getCurrentUser()
@@ -59,6 +86,16 @@ class CategoryController(
         return ResponseEntity(status)
     }
 
+    /**
+     * Deletes a category from the system by its name.
+     * This endpoint is restricted to admin users only.
+     *
+     * @param name The name of the category to delete
+     * @return ResponseEntity with HTTP status:
+     *         - OK if the category was successfully deleted
+     *         - NOT_FOUND if the category doesn't exist
+     *         - FORBIDDEN if the current user is not an admin
+     */
     @DeleteMapping("/delete/{name}")
     fun delete(@PathVariable name: String): ResponseEntity<Unit> {
         val user = authService.getCurrentUser()
