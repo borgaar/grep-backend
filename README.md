@@ -32,6 +32,8 @@ mvn clean
 mvn spring-boot:run
 ```
 
+**Note:** The database will be wiped everytime the server starts. To stop this, comment out (add `#` at the start of the line) `spring.sql.init.mode=always` in `src/main/resources/application.properties`. Note that the schema.sql must then be manually run after the database is started.
+
 To populate the database with some initial mock-data, you can run the `mockdata.sql` script.
 
 ## Run the test
@@ -42,3 +44,7 @@ To run the tests, you can use the following command:
 ./db.sh # Starts the MySQL database
 mvn test
 ```
+
+### API Documentation
+
+The API documentation can be found by running the backend server and navigating to `http://localhost:8080/swagger-ui/index.html` in your browser.
