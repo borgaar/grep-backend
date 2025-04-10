@@ -39,5 +39,6 @@ To populate the database with some initial mock-data, you can run the `mockdata.
 To run the tests, you can use the following command:
 
 ```
+./db.sh # Starts the MySQL database
 mvn test
 ```
