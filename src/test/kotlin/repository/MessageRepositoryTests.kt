@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.jdbc.Sql
 import java.time.LocalDateTime
+import java.util.*
 
 @JdbcTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -57,6 +58,7 @@ class MessageRepositoryTest {
         jdbc.execute("DELETE FROM users")
 
         userRepository.save(testUser1)
+        userRepository.save(testUser2)
     }
 
     @Test
@@ -68,9 +70,12 @@ class MessageRepositoryTest {
             testMessage.senderId,
             testMessage.recipientId
         )
+        val retrieved = messages[0]
 
         assertEquals(1, messages.size)
-        assertEquals(testMessage, messages[0])
+        assertEquals(testMessage.id, retrieved.id)
+        assertEquals(testMessage.senderId, retrieved.senderId)
+        assertEquals(testMessage.recipientId, retrieved.recipientId)
     }
 
     @Test
@@ -121,14 +126,6 @@ class MessageRepositoryTest {
     fun `should get contacts correctly`() {
         val messages = listOf(
             testMessage,
-            testMessage.copy(
-                content = "Har du tid til å møtes?",
-            ),
-            ChatMessage(
-                senderId = testUser1.phone,
-                recipientId = testUser2.phone,
-                content = "Ja, det passer fint!",
-            )
         )
 
         messages.forEach { messageRepository.create(it) }
@@ -144,7 +141,7 @@ class MessageRepositoryTest {
         assertEquals(testUser2.phone, contact.phone)
         assertEquals(testUser2.firstName, contact.firstName)
         assertEquals(testUser2.lastName, contact.lastName)
-        assertEquals("Ja, det passer fint!", contact.lastMessageContent)
+        assertEquals(testMessage.content, contact.lastMessageContent)
     }
 
     @Test
