@@ -34,3 +34,10 @@ mvn spring-boot:run
 
 To populate the database with some initial mock-data, you can run the `mockdata.sql` script.
 
+## Run the test
+
+To run the tests, you can use the following command:
+
+```
+mvn test
+```
