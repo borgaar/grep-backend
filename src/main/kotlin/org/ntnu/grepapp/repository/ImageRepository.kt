@@ -8,10 +8,18 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.stereotype.Repository
 import java.util.*
 
+/**
+ * Repository class for handling database operations related to images.
+ * Provides methods for storing and retrieving image data.
+ */
 @Repository
 class ImageRepository(
     private val jdbc: JdbcTemplate
 ) {
+
+    /**
+     * Row mapper for converting database rows to Image objects.
+     */
     private val rowMapper = RowMapper { rs, _ ->
         Image(
             id = UUID.fromString(rs.getString("id")),
@@ -19,6 +27,12 @@ class ImageRepository(
         )
     }
 
+    /**
+     * Loads multiple images from the database by their IDs.
+     *
+     * @param imageIds A list of UUIDs identifying the images to load
+     * @return A list of Image objects containing the requested images' data
+     */
     fun load(imageIds: List<UUID>): List<Image> {
         // they are guaranteed to be UUIDs, so this is fine
         var idList = imageIds.joinToString("', '")
@@ -33,6 +47,12 @@ class ImageRepository(
         return jdbc.query(sql, rowMapper)
     }
 
+    /**
+     * Saves a new image to the database.
+     *
+     * @param image The NewImage object containing the image data to save
+     * @return The UUID of the saved image
+     */
     fun save(image: NewImage): UUID {
         // save
         val sql = """
