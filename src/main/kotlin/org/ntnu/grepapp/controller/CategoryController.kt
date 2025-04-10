@@ -52,7 +52,10 @@ class CategoryController(
     ])
     @GetMapping
     fun getAll(
+        @Parameter(description = "Page number (zero-based)", example = "0")
         @RequestParam page: Int,
+
+        @Parameter(description = "Number of categories per page", example = "10")
         @RequestParam pageSize: Int
     ): List<CategoryDTO> {
         val list = categoryService.getAll(PageRequest.of(page, pageSize));
@@ -172,7 +175,10 @@ class CategoryController(
         )
     ])
     @DeleteMapping("/delete/{name}")
-    fun delete(@PathVariable name: String): ResponseEntity<Unit> {
+    fun delete(
+        @Parameter(description = "Name of the category to delete", example = "Electronics")
+        @PathVariable name: String
+    ): ResponseEntity<Unit> {
         val user = authService.getCurrentUser()
         if (user.isAdmin()) { return ResponseEntity(HttpStatus.FORBIDDEN) }
 

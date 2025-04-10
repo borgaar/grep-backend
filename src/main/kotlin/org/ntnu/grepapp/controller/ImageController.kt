@@ -51,7 +51,10 @@ class ImageController(
         )
     ])
     @PostMapping("/upload")
-    fun upload(@RequestParam file: MultipartFile): ResponseEntity<UploadImageResponse> {
+    fun upload(
+        @Parameter(description = "Image file to upload", required = true)
+        @RequestParam file: MultipartFile
+    ): ResponseEntity<UploadImageResponse> {
         val id = imageService.save(file.bytes)
         val body = UploadImageResponse(id.toString())
         return ResponseEntity(body, HttpStatus.OK)
@@ -80,7 +83,10 @@ class ImageController(
         )
     ])
     @GetMapping
-    fun download(@RequestParam imageIds: List<String>): ResponseEntity<Map<String, String>> {
+    fun download(
+        @Parameter(description = "List of image IDs to retrieve", example = "[\"a1b2c3d4-e5f6-7890-abcd-ef1234567890\"]", required = true)
+        @RequestParam imageIds: List<String>
+    ): ResponseEntity<Map<String, String>> {
         val images = imageService.load(imageIds.map { UUID.fromString(it) })
         val map = HashMap<String, String>()
         for (img in images) {
