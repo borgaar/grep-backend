@@ -18,7 +18,7 @@ The backend is built using the following technologies:
 ### Prerequisites
 This is what you will need, depending on how you want to run the project.
 
-- [Java 21](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html) - The Java Development Kit (JDK) is required to run the application.
+- [Java 21](https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html) - The Java Development Kit (JDK) is required to run the application.
 - [Maven](https://maven.apache.org/) - A build automation tool used primarily for Java projects.
 - [Docker](https://www.docker.com/) - A platform for developing, shipping, and running applications in containers.
 
