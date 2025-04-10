@@ -37,7 +37,7 @@ This is what you will need, depending on how you want to run the project.
 Follow the instructions below to run the project locally:
 
 ```
-./db.sh # Starts the MySQL database
+./db.sh
 mvn clean
 mvn spring-boot:run
 ```
@@ -49,7 +49,7 @@ To populate the database with some initial mock-data, you can run the `mockdata.
 To run the tests, you can use the following command:
 
 ```
-./db.sh # Starts the MySQL database
+./db.sh
 mvn clean test
 ```
 
