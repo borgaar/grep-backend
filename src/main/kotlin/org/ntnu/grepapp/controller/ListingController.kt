@@ -86,7 +86,7 @@ class ListingController(
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun create(@RequestBody request: ListingCreateRequest): ResponseEntity<Unit> {
+    fun create(@RequestBody request: ListingCreateRequest): ResponseEntity<ListingCreateResponse> {
         val new = NewListing(
             title = request.title,
             description = request.description,
@@ -105,7 +105,11 @@ class ListingController(
             HttpStatus.CONFLICT
         }
 
-        return ResponseEntity(status)
+        val response = ListingCreateResponse(
+            id = new.id.toString(),
+        )
+
+        return ResponseEntity(response, status)
     }
 
     @DeleteMapping("/{id}")

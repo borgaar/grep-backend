@@ -9,3 +9,7 @@ data class ListingCreateRequest(
     val price: Int,
     val category: String,
 )
+
+data class ListingCreateResponse(
+    val id: String,
+)
