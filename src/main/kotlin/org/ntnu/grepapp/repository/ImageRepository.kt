@@ -38,7 +38,10 @@ class ImageRepository(
         var idList = imageIds.joinToString("', '")
         if (idList.isNotEmpty()) {
             idList = "'$idList'"
+        } else {
+            return emptyList()
         }
+
         val sql = """
             SELECT i.id, i.buffer
             FROM images i
