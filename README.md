@@ -42,7 +42,7 @@ mvn clean
 mvn spring-boot:run
 ```
 
-To populate the database with some initial mock-data, you can run the `mockdata.sql` script.
+To populate the database with some initial mock-data, you can run the `mockdata.sql` script, for example using DataGrip.
 
 ## Run the test
 
