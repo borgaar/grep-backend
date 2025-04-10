@@ -15,6 +15,12 @@ The backend is built using the following technologies:
 
 ## Setup project
 
+First clone the repository:
+
+```bash
+git clone https://github.com/borgaar/grep-backend && cd grep-backend
+```
+
 ### Prerequisites
 This is what you will need, depending on how you want to run the project.
 
@@ -42,7 +48,7 @@ To run the tests, you can use the following command:
 
 ```
 ./db.sh # Starts the MySQL database
-mvn test
+mvn clean test
 ```
 
 ### API Documentation
