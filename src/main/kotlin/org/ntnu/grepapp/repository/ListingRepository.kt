@@ -11,10 +11,18 @@ import org.springframework.transaction.annotation.Transactional
 import java.util.*
 import kotlin.collections.ArrayList
 
+/**
+ * Repository class for handling database operations related to listings.
+ * Provides methods for creating, retrieving, updating, and managing listings and bookmarks.
+ */
 @Repository
 class ListingRepository(
     private val jdbc: JdbcTemplate
 ) {
+
+    /**
+     * Row mapper for converting database rows to Listing objects.
+     */
     private val rowMapper = RowMapper { rs, _ ->
         Listing(
             id = UUID.fromString(rs.getString("id")),
@@ -52,6 +60,9 @@ class ListingRepository(
         )
     }
 
+    /**
+     * Row mapper for converting database rows to BookmarkedListing objects.
+     */
     private val bookmarkedMapper = RowMapper { rs, i ->
         BookmarkedListing(
             listing = rowMapper.mapRow(rs, i)!!,
@@ -59,6 +70,12 @@ class ListingRepository(
         )
     }
 
+    /**
+     * Retrieves the image IDs associated with a listing.
+     *
+     * @param id The UUID of the listing
+     * @return A list of UUIDs representing the images associated with the listing
+     */
     private fun addImagesForListing(id: UUID): List<UUID> {
         // expensive, but simpler and less error-prone than a proper query
         val sql = """
@@ -72,6 +89,13 @@ class ListingRepository(
         return jdbc.query(sql, mapper, id.toString())
     }
 
+    /**
+     * Finds a specific listing by its ID.
+     *
+     * @param id The UUID of the listing to find
+     * @param userId The ID of the user making the request (for bookmark status)
+     * @return The Listing object if found, null otherwise
+     */
     fun find(id: UUID, userId: String): Listing? {
         val sql = """
             SELECT
@@ -96,6 +120,14 @@ class ListingRepository(
         return listing
     }
 
+    /**
+     * Retrieves a paginated and filtered list of listings.
+     *
+     * @param page Pagination information including page size and offset
+     * @param filter Filter criteria including price range, categories, search query, and sorting
+     * @param userId The ID of the user making the request (for bookmark status)
+     * @return A PaginatedListings object containing the listings and total count
+     */
     fun filterPaginate(page: Pageable, filter: ListingFilter, userId: String): PaginatedListings {
         val sorting = when (filter.sorting) {
             "price" -> "l.price"
@@ -203,6 +235,12 @@ class ListingRepository(
         )
     }
 
+    /**
+     * Creates a new listing in the database.
+     *
+     * @param listing The NewListing object containing listing details
+     * @return true if the listing was successfully created, false otherwise
+     */
     fun create(listing: NewListing): Boolean {
         val sql = """
             INSERT INTO listings (id, title, description, category, price, lat, lon, author, reserved_by)
@@ -222,6 +260,16 @@ class ListingRepository(
         return affected != 0
     }
 
+    /**
+     * Deletes a listing by its ID.
+     * Only the author of the listing or an admin can delete it.
+     * Also removes associated bookmarks.
+     *
+     * @param id The UUID of the listing to delete
+     * @param userId The ID of the user attempting to delete the listing
+     * @param isAdmin Whether the user has admin privileges
+     * @return true if the listing was successfully deleted, false otherwise
+     */
     @Transactional
     fun delete(id: UUID, userId: String, isAdmin: Boolean): Boolean {
         val parameters = ArrayList<String>()
@@ -256,6 +304,14 @@ class ListingRepository(
         return affected != 0
     }
 
+    /**
+     * Updates an existing listing with new information.
+     * Also updates associated images if provided.
+     *
+     * @param id The UUID of the listing to update
+     * @param new The UpdateListing object containing the updated listing details
+     * @return true if the listing was successfully updated, false otherwise
+     */
     @Transactional
     fun update(id: UUID, new: UpdateListing): Boolean {
         val sql = """
@@ -294,6 +350,13 @@ class ListingRepository(
         return affected != 0
     }
 
+    /**
+     * Retrieves all listings created by a specific user.
+     *
+     * @param userId The ID of the user whose listings to retrieve
+     * @param page Pagination information including page size and offset
+     * @return A list of Listing objects created by the specified user
+     */
     fun getListingsForUserId(userId: String, page: Pageable): List<Listing> {
         val sql = """
             SELECT
@@ -309,6 +372,13 @@ class ListingRepository(
         return jdbc.query(sql, rowMapper, userId, userId, page.pageSize, page.offset)
     }
 
+    /**
+     * Retrieves all listings bookmarked by a specific user.
+     *
+     * @param userId The ID of the user whose bookmarks to retrieve
+     * @param pageable Pagination information including page size and offset
+     * @return A list of BookmarkedListing objects for the specified user
+     */
     fun getBookmarked(userId: String, pageable: Pageable): List<BookmarkedListing> {
         val sql = """
             SELECT 
@@ -324,6 +394,13 @@ class ListingRepository(
         return jdbc.query(sql, bookmarkedMapper, userId, pageable.pageSize, pageable.offset);
     }
 
+    /**
+     * Creates a bookmark for a listing.
+     *
+     * @param listingId The UUID of the listing to bookmark
+     * @param userId The ID of the user creating the bookmark
+     * @return true if the bookmark was successfully created, false if it already exists
+     */
     fun createBookmark(listingId: UUID, userId: String): Boolean {
         val sql = """
             INSERT INTO bookmarks (user_id, listing_id) VALUES (?, ?)
@@ -335,6 +412,13 @@ class ListingRepository(
         };
     }
 
+    /**
+     * Deletes a bookmark for a listing.
+     *
+     * @param listingId The UUID of the listing to remove from bookmarks
+     * @param userId The ID of the user removing the bookmark
+     * @return true if the bookmark was successfully deleted, false if it didn't exist
+     */
     fun deleteBookmark(listingId: UUID, userId: String): Boolean {
         val sql = """
             DELETE FROM bookmarks WHERE user_id = ? AND listing_id = ?;
@@ -342,6 +426,13 @@ class ListingRepository(
         return jdbc.update(sql, userId, listingId.toString()) != 0;
     }
 
+    /**
+     * Marks a listing as reserved for a specific user.
+     *
+     * @param listingId The UUID of the listing to mark as reserved
+     * @param reservedUserID The ID of the user reserving the listing, or null to remove reservation
+     * @return true if the reservation status was successfully updated, false otherwise
+     */
     fun setReserved(listingId: UUID, reservedUserID: String?): Boolean {
         val sql = """
             UPDATE listings SET reserved_by = ? WHERE id = ?;
@@ -349,6 +440,13 @@ class ListingRepository(
         return jdbc.update(sql, reservedUserID, listingId.toString()) != 0;
     }
 
+    /**
+     * Marks a listing as sold to a specific user.
+     *
+     * @param listingId The UUID of the listing to mark as sold
+     * @param soldUserID The ID of the user who purchased the listing, or null to remove sold status
+     * @return true if the sold status was successfully updated, false otherwise
+     */
     fun markAsSold(listingId: UUID, soldUserID: String?): Boolean {
         val sql = """
             UPDATE listings SET sold_to = ? WHERE id = ?;
