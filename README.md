@@ -56,3 +56,4 @@ mvn clean test
 ### API Documentation
 
 The API documentation can be found by running the backend server and navigating to `http://localhost:8080/swagger-ui/index.html` in your browser.
+The OpenAPI spec can be found at `http://localhost:8080/v3/api-docs`.
