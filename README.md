@@ -32,7 +32,7 @@ This is what you will need, depending on how you want to run the project.
 
 ## Running the project
 
-**Note:** The database will be wiped everytime the server starts. To stop this, comment out (add `#` at the start of the line) the line "`spring.sql.init.mode=always`" in `src/main/resources/application.properties`. Note that the `schema.sql` must then be manually run after the database is started.
+**Note:** The database will be wiped everytime the server starts. To stop this, comment out (add `#` at the start of the line) the line "`spring.sql.init.mode=always`" in `src/main/resources/application.properties`.
 
 Follow the instructions below to run the project locally:
 
